@@ -4,6 +4,8 @@ import data.SteeringInfo;
 import processing.core.PVector;
 
 /**
+ * Class representing the steering behaviour, Seek.
+ *
  * Created by Anand on 2/13/2016.
  */
 public class Seek extends AbstractSteering {

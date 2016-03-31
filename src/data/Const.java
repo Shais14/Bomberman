@@ -4,28 +4,43 @@ package data;
 import processing.core.PConstants;
 
 /**
+ * File containing values of various parameters used by the game.
+ * Ideally, all parameter values should be defined here, and used from this interface.
+ *
  * Created by Anand on 2/12/2016.
  */
 public interface Const extends PConstants {
+    // The epsilon value for all floating point comparisons to be used on angles (orientations, rotations, etc.)
     float ANGLE_EPSILON = PI/30;
+
+    // Epsilon value for floating point comparisons to be used on linear values (positions, velocities, etc.)
+    // (Currently not used anywhere)
     float LINEAR_EPSILON = 1f;
 
+    // Number of breadcrumbs to be drawn on the screen
     int BREADCRUMB_COUNT = 800;
 
+    // Time after which AI computations should take place (in milliseconds)
     int AI_COMPUTE_TIME = 50;
+    // Time after which the next bread crumb should be drawn (in milliseconds)
     int CRUMB_DRAW_TIME = 250;
 
+    // Maximum values that should be allowed for a player
     float MAX_SPEED = 50f;
+    float MAX_ROTATION = -PI;
     float MAX_LINEAR_ACCELERATION = 12.5f;
     float MAX_ANGULAR_ACCELERATION = - PI / 1.5f;
 
+    // Satisfaction and deceleration values for Arrive
     float LINEAR_RADIUS_SATISFACTION = 0.5f;
     float LINEAR_RADIUS_DECELERATION = 15f;
+
     float TIME_TARGET_VELOCITY = 0.15f;
 
-    float MAX_ROTATION = -PI;
+    //Satisfaction and deceleration values for Align (in radians)
     float ANGULAR_RADIUS_SATISFACTION = PI / 64;
     float ANGULAR_RADIUS_DECELERATION = PI / 16;
+
     float TIME_TARGET_ROTATION = 0.05f;
 
 //    float WANDER_OFFSET = 100;

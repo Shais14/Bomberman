@@ -3,11 +3,16 @@ package data;
 import processing.core.PVector;
 
 /**
+ * This class represents the data structure used to maintain information about a player or a target.
+ * Information stored is - position, orientation, velocity and rotation.
+ * Also contains information about a player's max speed.
+ *
  * Created by Anand on 2/12/2016.
  */
 public class KinematicInfo {
     PVector position;
     float orientation;
+
     PVector velocity;
     float rotation;
 

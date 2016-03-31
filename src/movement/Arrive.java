@@ -4,6 +4,10 @@ import data.SteeringInfo;
 import processing.core.PVector;
 
 /**
+ * Class representing the steering behaviour, Arrive.
+ * Parameters involeved here are - satisfaction distance (radiusOfSatisfaction),
+ * deceleration distance (radiusOfDeceleration) and time to target velocity
+ *
  * Created by Anand on 2/14/2016.
  */
 public class Arrive extends AbstractSteering {

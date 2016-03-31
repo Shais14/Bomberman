@@ -4,6 +4,9 @@ import data.Helper;
 import data.SteeringInfo;
 
 /**
+ * Class representing the steering behaviour, Align.
+ * Parameters involved in this are - radius of satisfaction, radius of deceleration and time to target orientation.
+ *
  * Created by Anand on 2/14/2016.
  */
 public class Align extends AbstractAlignSteering {
@@ -67,6 +70,11 @@ public class Align extends AbstractAlignSteering {
         }
     }
 
+    /**
+     * Method to check if the target orientation has been reached.
+     *
+     * @return boolean
+     */
     public boolean checkOrientationReached() {
         return Helper.checkAngleEquality(target.getOrientation(), player.getOrientation());
     }

@@ -5,6 +5,8 @@ import data.PlayerInfo;
 import data.SteeringInfo;
 
 /**
+ * An abstract class to represent the various methods to be associated with a steering behaviour.
+ *
  * Created by Anand on 2/13/2016.
  */
 public abstract class AbstractSteering extends Behavior {

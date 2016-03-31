@@ -3,6 +3,9 @@ package data;
 import processing.core.PVector;
 
 /**
+ * This class represents the data structure used to store the accelerations output by a steering behaviour.
+ * It contains both the linear as well as angular acceleration values.
+ *
  * Created by Anand on 2/12/2016.
  */
 public class SteeringInfo {

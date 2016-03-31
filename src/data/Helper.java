@@ -5,6 +5,8 @@ import processing.core.PConstants;
 import java.util.Random;
 
 /**
+ * This class contains utility methods that can be used anywhere in the project.
+ *
  * Created by Anand on 2/13/2016.
  */
 public class Helper {

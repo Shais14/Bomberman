@@ -42,4 +42,7 @@ public class Tile
         return new PVector(x, y);
     }
 
+    public String toString() {
+        return posNum.x + " " + posNum.y;
+    }
 }

@@ -6,7 +6,6 @@ import data.SteeringInfo;
 import movement.Align;
 import movement.Arrive;
 import processing.core.*;
-
 import java.util.ArrayList;
 
 public class Main extends PApplet {

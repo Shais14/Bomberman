@@ -13,85 +13,26 @@ public class Main extends PApplet {
     //Data Structures
     BombermanMap bombermanMap;
     PlayerInfo player;
+    Enemy enemy;
 
     int blastRadius = 1;
 
     //Shapes to be rendered
-    PShape mainShape, circleShape, orientShape, crumbShape;
     PShape bombShape;
     PVector bombPos;
-    ArrayList<PVector> breadcrumbs;
-
-    //Steering behaviour info
-    Arrive sArrive;
-    Align sAlign;
-    SteeringInfo steering;
 
     //Timing control values
-    long lastAIComputeTime, lastCrumbDrawTime, bombPlantTime;
+    long bombPlantTime;
 
-    //Colors used
-    public final int empty = color(125, 125, 125);
-    public final int brick = color(200, 100, 0);
-    public final int obs = color(100, 100, 0);
-    public final int treasure = color(0, 0, 0);
+    public void initializeCharacters(PVector startingPoint, PVector enemyStartingPoint) {
+        player = new PlayerInfo(this);
+        player.initialize(startingPoint);
 
-    public void initializePlayer(PVector startingPoint) {
-        PVector initialPos;
-        if (startingPoint == null) {
-            initialPos = new PVector();
-        } else {
-            initialPos = startingPoint.copy();
-        }
-
-        player = new PlayerInfo();
-        player.setPosition(initialPos);
-        player.setOrientation(0);
-        player.setMaxSpeed(Const.MAX_SPEED);
-
-        KinematicInfo target = new KinematicInfo();
-        target.setPosition(initialPos);
-        target.setOrientation(0);
-
-        sArrive = new Arrive();
-        sArrive.setMaxAcceleration(Const.MAX_LINEAR_ACCELERATION);
-        sArrive.setPlayer(player);
-        sArrive.setTarget(target);
-        sArrive.setMaxSpeed(Const.MAX_SPEED);
-        sArrive.setRadiusOfDeceleration(Const.LINEAR_RADIUS_DECELERATION);
-        sArrive.setRadiusOfSatisfaction(Const.LINEAR_RADIUS_SATISFACTION);
-        sArrive.setTimeToTarget(Const.TIME_TARGET_VELOCITY);
-
-        sAlign = new Align();
-        sAlign.setMaxRotation(Const.MAX_ROTATION);
-        sAlign.setMaxAngularAcceleration(Const.MAX_ANGULAR_ACCELERATION);
-        sAlign.setRadiusOfSatisfaction(Const.ANGULAR_RADIUS_SATISFACTION);
-        sAlign.setRadiusOfDeceleration(Const.ANGULAR_RADIUS_DECELERATION);
-        sAlign.setTimeToTarget(Const.TIME_TARGET_ROTATION);
-        sAlign.setPlayer(player);
-        sAlign.setTarget(target);
-
-        steering = new SteeringInfo();
-
-        circleShape = createShape(ELLIPSE, 0, 0, 20, 20);
-        circleShape.setFill(color(0));
-
-        orientShape = createShape(TRIANGLE, 0, -10, 0, 10, 15, 0);
-        orientShape.setFill(color(0));
-
-        mainShape = createShape(GROUP);
-        mainShape.addChild(circleShape);
-        mainShape.addChild(orientShape);
-
-        crumbShape = createShape(ELLIPSE, 0, 0, 2, 2);
-        crumbShape.setFill(color(64));
-        breadcrumbs = new ArrayList<PVector>();
+        enemy = new Enemy(this);
+        enemy.initialize(enemyStartingPoint);
 
         bombShape = createShape(ELLIPSE, 0, 0, 10, 10);
         bombShape.setFill(color(127, 0, 0));
-
-        lastAIComputeTime = System.currentTimeMillis();
-        lastCrumbDrawTime = System.currentTimeMillis();
     }
 
     public void drawBomb() {
@@ -101,94 +42,6 @@ public class Main extends PApplet {
         popMatrix();
     }
 
-    public void drawPlayer() {
-        long currentTime = System.currentTimeMillis();
-
-        if ((currentTime - lastAIComputeTime > Const.AI_COMPUTE_TIME)) {
-            computeAI();
-            lastAIComputeTime = currentTime;
-        }
-
-        if ((currentTime - lastCrumbDrawTime > Const.CRUMB_DRAW_TIME)) {
-            updateCrumbs();
-            lastCrumbDrawTime = currentTime;
-        }
-
-        if (sAlign.checkOrientationReached()) {
-            player.setRotation(0);
-            steering.setAngular(0);
-        }
-
-        player.update(steering, currentTime);
-
-        drawCrumbs();
-
-        pushMatrix();
-        translate(player.getPosition().x, player.getPosition().y);
-        rotate(player.getOrientation());
-        shape(mainShape);
-        popMatrix();
-    }
-
-    public void drawMap() {
-        int i, j;
-        data.Tile tile;
-        rectMode(CENTER);
-
-        fill(treasure);
-        int temp[] = new int[2];
-        int space = bombermanMap.Treasure.indexOf(' ');
-        temp[0] = Integer.parseInt(bombermanMap.Treasure.substring(0, space));
-        temp[1] = Integer.parseInt(bombermanMap.Treasure.substring(space + 1,
-                bombermanMap.Treasure.length()));
-
-
-        tile = bombermanMap.tiles[temp[0]][temp[1]];
-        rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
-
-
-
-        for (i = 0; i < bombermanMap.row; i++) {
-            for (j = 0; j < bombermanMap.col; j++) {
-                tile = bombermanMap.tiles[i][j];
-                if (tile.ty == Tile.type.OBSTACLE) {
-                    fill(obs);
-                    stroke(0);
-                    strokeWeight(2);
-                } else if (tile.ty == Tile.type.BRICK) {
-                    stroke(0);
-                    fill(brick);
-                } else {
-                    fill(empty);
-                    noStroke();
-                }
-                rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
-            }
-        }
-    }
-
-    void updateCrumbs() {
-        if (breadcrumbs.size() >= Const.BREADCRUMB_COUNT) {
-            breadcrumbs.remove(0);
-        }
-
-        breadcrumbs.add(player.getPosition().copy());
-    }
-
-    void drawCrumbs() {
-        for (PVector crumb : breadcrumbs) {
-            pushMatrix();
-            translate(crumb.x, crumb.y);
-            shape(crumbShape);
-            popMatrix();
-        }
-    }
-
-    void computeAI() {
-        steering = sArrive.getSteering();
-        sAlign.getSteering(steering);
-    }
-
     public void settings() {
         size(600, 600);
     }
@@ -196,10 +49,8 @@ public class Main extends PApplet {
     public void setup() {
         background(155);
 
-        bombermanMap = BombermanMap.initializeBombermanMap(width, height);
-
-        initializePlayer(bombermanMap.tiles[1][1].posCord);
-
+        bombermanMap = BombermanMap.initializeBombermanMap(this);
+        initializeCharacters(bombermanMap.tiles[1][1].posCord, bombermanMap.tiles[13][13].posCord);
     }
 
 //    public void mousePressed()
@@ -208,8 +59,9 @@ public class Main extends PApplet {
 //    }
 
     public void draw() {
-        drawMap();
-        drawPlayer();
+        bombermanMap.draw();
+        player.draw();
+        enemy.draw();
 
         if (bombPos != null) {
             drawBomb();
@@ -223,24 +75,12 @@ public class Main extends PApplet {
 
     }
 
-    public void move(PVector targetPos) {
-        KinematicInfo target = new KinematicInfo();
-        target.setPosition(targetPos.copy());
-
-        sArrive.setTarget(target);
-        sAlign.setTarget(target);
-
-        PVector direction = PVector.sub(target.getPosition(), player.getPosition());
-        player.setRotation(0);
-        sAlign.getTarget().setOrientation(direction.heading());
-    }
-
     public void moveToTile(int tileX, int tileY) {
         PVector targetPos = bombermanMap.getNewTileCords(tileX, tileY);
 
         if (targetPos != null) {
             // Valid move
-            move(targetPos);
+            player.move(targetPos);
         }
     }
 
@@ -255,12 +95,27 @@ public class Main extends PApplet {
         int tileY = bombermanMap.quantizeY(bombPos);
 
         Tile bombedTile = bombermanMap.tiles[tileY][tileX];
-        //TODO: Check the way the edges are set up
-        ArrayList<String> outgoingEdges = bombermanMap.edges.get(tileY + " " + tileX);
-        destroyAllOnTile(tileY + " " + tileX);
+        ArrayList<String> outgoingEdges = bombermanMap.edges.get(bombedTile.toString());
+        destroyAllOnTile(bombedTile.toString());
         for (int i = 0; i < outgoingEdges.size(); i += 2) {
             String tileStr = outgoingEdges.get(i);
             destroyAllOnTile(tileStr);
+        }
+    }
+
+    public void killAll(Tile tile) {
+        //Kill player
+        int playerTileX = bombermanMap.quantizeX(player.kinematicInfo.getPosition());
+        int playerTileY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
+        if (playerTileX == tile.posNum.colIndex && playerTileY == tile.posNum.rowIndex) {
+            player.die();
+        }
+
+        //Kill enemy(ies)
+        int enemyTileX = bombermanMap.quantizeX(enemy.kinematicInfo.getPosition());
+        int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
+        if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
+            enemy.die();
         }
     }
 
@@ -279,20 +134,14 @@ public class Main extends PApplet {
             case OBSTACLE:
                 break;
             case EMPTY:
-                int tileX = bombermanMap.quantizeX(player.getPosition());
-                int tileY = bombermanMap.quantizeY(player.getPosition());
-                if (tileX == tile.posNum.colIndex && tileY == tile.posNum.rowIndex) {
-                    player.die();
-                }
-
-                //TODO: Destroy enemy also
+                killAll(tile);
                 break;
         }
     }
 
     public void keyPressed() {
-        int currPosX = bombermanMap.quantizeX(player.getPosition());
-        int currPosY = bombermanMap.quantizeY(player.getPosition());
+        int currPosX = bombermanMap.quantizeX(player.kinematicInfo.getPosition());
+        int currPosY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
         if (keyPressed) {
             int activeKey = (key == CODED) ? keyCode : key;
 

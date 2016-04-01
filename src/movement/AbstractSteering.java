@@ -13,12 +13,12 @@ public abstract class AbstractSteering extends Behavior {
     float maxAcceleration;
 
     KinematicInfo target;
-    PlayerInfo player;
+    KinematicInfo player;
 
     public AbstractSteering() {
     }
 
-    public AbstractSteering(float maxAcceleration, KinematicInfo target, PlayerInfo player) {
+    public AbstractSteering(float maxAcceleration, KinematicInfo target, KinematicInfo player) {
         this.maxAcceleration = maxAcceleration;
         this.target = target;
         this.player = player;
@@ -40,11 +40,11 @@ public abstract class AbstractSteering extends Behavior {
         this.target = target;
     }
 
-    public PlayerInfo getPlayer() {
+    public KinematicInfo getPlayer() {
         return player;
     }
 
-    public void setPlayer(PlayerInfo player) {
+    public void setPlayer(KinematicInfo player) {
         this.player = player;
     }
 

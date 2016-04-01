@@ -75,6 +75,37 @@ public class KinematicInfo {
         this.maxSpeed = maxSpeed;
     }
 
+    public float getNewOrientation() {
+        return getNewOrientation(this);
+    }
+
+    public float getNewOrientation(KinematicInfo dynamicInfo) {
+        if (dynamicInfo.getVelocity().magSq() > 0) {
+            return dynamicInfo.getVelocity().heading();
+        }
+
+        return orientation;
+    }
+
+    public float getNewOrientation(SteeringInfo steeringInfo) {
+        if (steeringInfo.getLinear().magSq() > 0) {
+            return steeringInfo.getLinear().heading();
+        }
+
+        return orientation;
+    }
+
+    public void updateOrientation() {
+        orientation = getNewOrientation();
+    }
+
+    public void updateOrientation(KinematicInfo dynamicInfo) {
+        orientation = getNewOrientation(dynamicInfo);
+    }
+
+    public void updateOrientation(SteeringInfo steeringInfo) {
+        orientation = getNewOrientation(steeringInfo);
+    }
 
     /**
      * Kinematic update of the character's information

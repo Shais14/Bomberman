@@ -1,6 +1,7 @@
 package data;
 
 import debug.DebugUtil;
+import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 /**
+ * This class represents the map used for a particular level in the game.
+ *
  * Created by Anand on 3/31/2016.
  */
 public class BombermanMap {
@@ -19,6 +22,26 @@ public class BombermanMap {
 
     public HashMap<String, ArrayList<String>> edges;
     public String Treasure;
+
+    //Colors used
+    public int empty;
+    public int brick;
+    public int obs;
+    public int treasure;
+
+    PApplet parent;
+
+    public BombermanMap() {
+
+    }
+
+    public BombermanMap(PApplet parent) {
+        this.parent = parent;
+        empty = parent.color(125, 125, 125);
+        brick = parent.color(200, 100, 0);
+        obs = parent.color(100, 100, 0);
+        treasure = parent.color(0, 0, 0);
+    }
 
     public int quantizeX(PVector coordinates) {
         return (int) (coordinates.x / tileSize);
@@ -67,9 +90,9 @@ public class BombermanMap {
         return bricks;
     }
 
-    public static BombermanMap initializeBombermanMap(int width, int height) {
-        BombermanMap bombermanMap = new BombermanMap();
-        bombermanMap.initialize(width, height);
+    public static BombermanMap initializeBombermanMap(PApplet parent) {
+        BombermanMap bombermanMap = new BombermanMap(parent);
+        bombermanMap.initialize(parent.width, parent.height);
         return bombermanMap;
     }
 
@@ -224,5 +247,40 @@ public class BombermanMap {
 
     public Tile toTile(String s) {
         return PosNum.toTile(s, this);
+    }
+
+    public void draw() {
+        int i, j;
+        data.Tile tile;
+        parent.rectMode(PApplet.CENTER);
+
+        parent.fill(treasure);
+        int temp[] = new int[2];
+        int space = Treasure.indexOf(' ');
+        temp[0] = Integer.parseInt(Treasure.substring(0, space));
+        temp[1] = Integer.parseInt(Treasure.substring(space + 1,
+                Treasure.length()));
+
+
+        tile = tiles[temp[0]][temp[1]];
+        parent.rect(tile.posCord.x, tile.posCord.y, tileSize, tileSize);
+
+        for (i = 0; i < row; i++) {
+            for (j = 0; j < col; j++) {
+                tile = tiles[i][j];
+                if (tile.ty == Tile.type.OBSTACLE) {
+                    parent.fill(obs);
+                    parent.stroke(0);
+                    parent.strokeWeight(2);
+                } else if (tile.ty == Tile.type.BRICK) {
+                    parent.stroke(0);
+                    parent.fill(brick);
+                } else {
+                    parent.fill(empty);
+                    parent.noStroke();
+                }
+                parent.rect(tile.posCord.x, tile.posCord.y, tileSize, tileSize);
+            }
+        }
     }
 }

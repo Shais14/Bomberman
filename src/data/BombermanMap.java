@@ -55,7 +55,7 @@ public class BombermanMap {
             if (x % 2 == 0 && y % 2 == 0)
                 continue;
 
-            temp = String.valueOf(y) + " " + String.valueOf(x);
+            temp = x + " " + y;
 
             if (bricks.contains(temp))
                 continue;
@@ -80,7 +80,7 @@ public class BombermanMap {
     public void initialize(int width, int height) {
         int i, j;
         String temp, adjTile;
-        ArrayList<String> adjList = new ArrayList<String>();
+        ArrayList<String> adjList;
         Tile.type type;
 
         row = height / tileSize;
@@ -95,9 +95,9 @@ public class BombermanMap {
                 Tile tile;
                 if (i == 0 || j == 0 || i == (row - 1) || j == (col - 1) || (i % 2 == 0 && j % 2 == 0)) {
                     type = Tile.type.OBSTACLE;
-                    tile = new Tile(j, i, type, this);
+                    tile = new Tile(i, j, type, this);
                 } else {
-                    temp = String.valueOf(i) + " " + String.valueOf(j);
+                    temp = i + " " +  j;
 
                     if (bricks.contains(temp)) {
                         type = Tile.type.BRICK;
@@ -105,7 +105,7 @@ public class BombermanMap {
                         type = Tile.type.EMPTY;
                     }
 
-                    tile = new Tile(j, i, type, this);
+                    tile = new Tile(i, j, type, this);
                 }
 
                 tile.parent = this;
@@ -117,29 +117,32 @@ public class BombermanMap {
         for (i = 1; i < row - 1; i++) {
             for (j = 1; j < col - 1; j++) {
                 {
-                    temp = i + " " + j;
+                    if (tiles[i][j].ty==Tile.type.OBSTACLE)
+                        continue;
 
-                    adjList.clear();
-                    if (i != 0 && tiles[i - 1][j].ty == Tile.type.EMPTY) {
-                        adjTile = String.valueOf(i - 1) + " " + String.valueOf(j);
+                    temp = tiles[i][j].toString();
+
+                    adjList  = new ArrayList<String>();
+                    if (i != 0 && tiles[i - 1][j].ty != Tile.type.OBSTACLE) {
+                        adjTile = (i - 1) + " " + j;
                         adjList.add(adjTile);
                         adjList.add(String.valueOf(1));
                     }
 
-                    if (j != 0 && tiles[i][j - 1].ty == Tile.type.EMPTY) {
-                        adjTile = String.valueOf(i) + " " + String.valueOf(j - 1);
+                    if (j != 0 && tiles[i][j - 1].ty != Tile.type.OBSTACLE) {
+                        adjTile = i + " " + (j - 1);
                         adjList.add(adjTile);
                         adjList.add(String.valueOf(1));
                     }
 
-                    if (i != (row - 1) && tiles[i + 1][j].ty == Tile.type.EMPTY) {
-                        adjTile = String.valueOf(i + 1) + " " + String.valueOf(j);
+                    if (i != (row - 1) && tiles[i + 1][j].ty != Tile.type.OBSTACLE) {
+                        adjTile =  (i + 1) + " " + j;
                         adjList.add(adjTile);
                         adjList.add(String.valueOf(1));
                     }
 
-                    if (j != (col - 1) && tiles[i][j + 1].ty == Tile.type.EMPTY) {
-                        adjTile = String.valueOf(i) + " " + String.valueOf(j + 1);
+                    if (j != (col - 1) && tiles[i][j + 1].ty != Tile.type.OBSTACLE) {
+                        adjTile = i + " " +  (j + 1);
                         adjList.add(adjTile);
                         adjList.add(String.valueOf(1));
                     }
@@ -148,7 +151,7 @@ public class BombermanMap {
                 }
             }
         }
-//        DebugUtil.printEdges(this);
+        DebugUtil.printEdges(this);
         addTreasure(bricks);
 //        System.out.println(Treasure);
 

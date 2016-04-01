@@ -16,7 +16,7 @@ public class DebugUtil {
 
             ArrayList<String> adjList = edges.get(currNode);
             for (int i = 0; i < adjList.size(); i+=2) {
-                System.out.print("{ " + adjList.get(i) + " }, ");
+                System.out.print("{ " + adjList.get(i) + " , " + adjList.get(i+1) + " }, ");
             }
             System.out.println();
         }

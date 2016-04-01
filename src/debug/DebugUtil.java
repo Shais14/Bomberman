@@ -21,4 +21,24 @@ public class DebugUtil {
             System.out.println();
         }
     }
+
+    public static  void printSignalStrength(BombermanMap bombermanMap){
+
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+
+        for(int i =0; i< 15; i++){
+            for(int j=0; j < 15; j++){
+                System.out.print(bombermanMap.tiles[i][j].signal + "     ");
+            }
+            System.out.println();
+            System.out.println();
+        }
+    }
+
 }

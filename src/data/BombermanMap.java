@@ -151,13 +151,62 @@ public class BombermanMap {
                 }
             }
         }
-        DebugUtil.printEdges(this);
+//        DebugUtil.printEdges(this);
         addTreasure(bricks);
 //        System.out.println(Treasure);
 
 //        for (i = 0; i < bricks.size(); i++) {
 //            System.out.println(bricks.get(i));
 //        }
+
+
+        setSignalStrength();
+
+
+    }
+
+    private void setSignalStrength() {
+
+        System.out.println(Treasure + " Treasure");
+        Tile Trea = toTile(Treasure);
+
+        int flag[][] = new int[15][15];
+
+        int signalStrength = 50;
+
+        int rk = Trea.posNum.rowIndex;
+        int ck = Trea.posNum.colIndex;
+
+
+        for(int k = 1; k <=5; k++){
+
+            int level = k;
+            int lextreme = rk-level;
+            if(lextreme < 1 ) lextreme =1;
+            int rextreme = rk+level;
+            if(rextreme > 13 ) rextreme =13;
+            int textreme = ck-level;
+            if(textreme < 1 ) textreme = 1;
+            int bextreme = ck+level;
+            if(bextreme > 13 ) bextreme = 13;
+
+        for(int r = lextreme; r <=rextreme; r++){
+        for(int c = textreme; c <=bextreme; c++) {
+            if(r == rk && c == ck){
+                tiles[r][c].signal = 100;
+            }
+            if(flag[r][c] == 0) {
+                tiles[r][c].signal = signalStrength;
+                flag[r][c] = 1;
+            }
+        }
+        }
+            signalStrength -= 10;
+        }
+
+
+        DebugUtil.printSignalStrength(this);
+
     }
 
     public PVector getNewTileCords(int tileX, int tileY) {

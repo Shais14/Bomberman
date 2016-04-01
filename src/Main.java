@@ -134,16 +134,6 @@ public class Main extends PApplet {
         data.Tile tile;
         rectMode(CENTER);
 
-        fill(treasure);
-        int temp[] = new int[2];
-        int space = bombermanMap.Treasure.indexOf(' ');
-        temp[0] = Integer.parseInt(bombermanMap.Treasure.substring(0, space));
-        temp[1] = Integer.parseInt(bombermanMap.Treasure.substring(space + 1,
-                bombermanMap.Treasure.length()));
-
-
-        tile = bombermanMap.tiles[temp[1]][temp[0]];
-        rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
 
         for (i = 0; i < bombermanMap.row; i++) {
             for (j = 0; j < bombermanMap.col; j++) {
@@ -162,6 +152,17 @@ public class Main extends PApplet {
                 rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
             }
         }
+        fill(treasure);
+        int temp[] = new int[2];
+        int space = bombermanMap.Treasure.indexOf(' ');
+        temp[0] = Integer.parseInt(bombermanMap.Treasure.substring(0, space));
+        temp[1] = Integer.parseInt(bombermanMap.Treasure.substring(space + 1,
+                bombermanMap.Treasure.length()));
+
+
+        tile = bombermanMap.tiles[temp[0]][temp[1]];
+        rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
+
     }
 
     void updateCrumbs() {

@@ -9,6 +9,7 @@ public class Tile {
     public PVector posCord;
     public Tile.type ty;
     public BombermanMap parent;
+    public int signal;
 
     public enum type {
         EMPTY(255), BRICK(100), OBSTACLE(200);
@@ -28,6 +29,7 @@ public class Tile {
         this.parent = parent;
         posCord = localize(posNum);
         ty = e;
+        signal = 5;
 
     }
 

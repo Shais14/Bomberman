@@ -3,10 +3,8 @@
  */
 import processing.core.*;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 public class Graph extends PApplet {
@@ -16,14 +14,21 @@ public class Graph extends PApplet {
     public final int empty = color(125, 125, 125);
     public final int brick = color(200, 100, 0);
     public final int obs = color(100, 100, 0);
+    public final int treasure = color(0, 0, 0);
 
     public static Tile tiles[][];
     public static ArrayList<String> bricks = new ArrayList<String>();
 
     public static HashMap<String, ArrayList<String>> edges;
+    public String Treasure;
+
     public void settings() {
         size(600, 600);
     }
+    /*
+    Note: X denotes the coloumn number;
+          Y denotes the row number in the grid.
+    */
 
     public void setup() {
         background(155);
@@ -50,8 +55,9 @@ public class Graph extends PApplet {
                 }
 
                 temp = String.valueOf(i) + " " + String.valueOf(j);
-                if(bricks.contains(temp))
-                   type = Tile.type.BRICK;
+                if(bricks.contains(temp)) {
+                    type = Tile.type.BRICK;
+                }
                 else
                     type = Tile.type.EMPTY;
 
@@ -92,7 +98,19 @@ public class Graph extends PApplet {
                 edges.put(temp, adjList);
             }
 
+        addTreasure(bricks);
+        System.out.println(Treasure);
 
+        for(i = 0; i< bricks.size(); i++){
+            System.out.println(bricks.get(i));
+        }
+    }
+
+    /**/
+    public void addTreasure(ArrayList<String> bricks) {
+        Random r = new Random();
+        int TreasurePos = r.nextInt(bricks.size());
+        Treasure = bricks.get(TreasurePos);
     }
 
     public ArrayList<String> addBricks()
@@ -103,12 +121,18 @@ public class Graph extends PApplet {
         ArrayList<String> bricks = new ArrayList<String>();
         do
         {
-            x = r.nextInt(row);
-            y = r.nextInt(col);
+            y = r.nextInt(row);
+            x = r.nextInt(col);
 
+//          To avoid boundary walls
+            if( x == 0 || y == 0|| (x == col-1) || y == (row -1))
+                continue;
+
+//          To avoid the first 3 bricks
             if( ( x == 1 && y == 1 )|| (x == 1 && y == 2) || ( x == 2 && y == 1 )  )
                 continue;
 
+//          To avoid the solid bricks
             if ( x%2 == 0 && y%2 == 0)
                 continue;
 
@@ -129,6 +153,17 @@ public class Graph extends PApplet {
         int i, j;
         Tile tile;
         rectMode(CENTER);
+
+        fill(treasure);
+        int temp[] = new int[2];
+        int space = Treasure.indexOf(' ');
+        temp[0] = Integer.parseInt(Treasure.substring(0,space));
+        temp[1] = Integer.parseInt(Treasure.substring(space + 1, Treasure.length()));
+
+
+        tile = tiles[temp[1]][temp[0]];
+        rect(tile.posCord.x, tile.posCord.y, tileSize, tileSize);
+
         for (i = 0; i<row; i++) {
             for (j = 0; j < col; j++) {
                 tile = tiles[i][j];
@@ -147,6 +182,8 @@ public class Graph extends PApplet {
                 rect(tile.posCord.x, tile.posCord.y, tileSize, tileSize);
             }
         }
+
+
 
 
     }

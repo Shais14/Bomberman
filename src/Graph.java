@@ -231,7 +231,7 @@ public class Graph extends PApplet {
         }
 
         initializePlayer();
-        ArrayList<String> path = Astar.pathAstar(bricks.get(1), bricks.get(5), "E");
+//        ArrayList<String> path = Astar.pathAstar(bricks.get(1), bricks.get(5), "E");
     }
 
     public void addTreasure(ArrayList<String> bricks) {

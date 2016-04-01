@@ -18,6 +18,8 @@ public class Graph extends PApplet {
     public final int obs = color(100, 100, 0);
 
     public static Tile tiles[][];
+    public static ArrayList<String> bricks = new ArrayList<String>();
+
     public static HashMap<String, ArrayList<String>> edges;
     public void settings() {
         size(600, 600);
@@ -29,7 +31,6 @@ public class Graph extends PApplet {
         int i, j;
         String temp, adjTile;
         ArrayList<String> adjList  = new ArrayList<String>();
-        ArrayList<String> bricks = new ArrayList<String>();
         Tile.type type;
 
         row = height/tileSize;

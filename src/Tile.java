@@ -45,4 +45,15 @@ public class Tile
     public String toString() {
         return posNum.x + " " + posNum.y;
     }
+
+    public static Tile toTile(String s)
+    {
+        int i, j;
+        String[] str = s.split(" ");
+
+        i = Integer.parseInt(str[0]);
+        j = Integer.parseInt(str[1]);
+        return Graph.tiles[i][j];
+    }
 }
+

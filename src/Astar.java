@@ -10,7 +10,7 @@ class Node
     String name;
     float cost, estimateTotal;
 
-    public NodeAstar(String s)
+    public Node(String s)
     {
         name = s;
     }

@@ -189,5 +189,7 @@ public class Graph extends PApplet {
     }
 
     public static void main(String[] args) {
-        PApplet.main(new String[] {"--present","Graph"});}
+        PApplet.main(new String[] {"--present","Graph"});
+        ArrayList<String> path = Astar.pathAstar(bricks.get(1), bricks.get(5), "E");
+    }
 }

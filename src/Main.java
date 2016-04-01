@@ -1,4 +1,5 @@
 
+import algorithms.Astar;
 import data.*;
 import movement.Align;
 import movement.Arrive;
@@ -199,8 +200,12 @@ public class Main extends PApplet {
 
         initializePlayer(bombermanMap.tiles[1][1].posCord);
 
-//        ArrayList<String> path = Astar.pathAstar(bricks.get(1), bricks.get(5), "E");
     }
+
+//    public void mousePressed()
+//    {
+//        ArrayList<String> path = Astar.pathAstar("1 1", "3 3", "E", bombermanMap);
+//    }
 
     public void draw() {
         drawMap();
@@ -215,6 +220,7 @@ public class Main extends PApplet {
                 bombPos = null;
             }
         }
+
     }
 
     public void move(PVector targetPos) {

@@ -23,9 +23,9 @@ public class Astar {
 
     public static void calHeuristic(String s, String e, String h) {
         ArrayList<String> str, strEnd;
-        String brick;
+        String name;
         Tile tile;
-        int i;
+        int i, j;
         float x1, y1, x2, y2;
         float value;
 
@@ -35,16 +35,21 @@ public class Astar {
         x1 = pos.x;
         y1 = pos.y;
 
-        for (i = 0; i < bombermanMap.bricks.size(); i++) {
-            brick = bombermanMap.bricks.get(i);
-            tile = Tile.toTile(brick, bombermanMap);
+        for (i = 1; i < bombermanMap.row - 1; i++)
+            for (j = 1; j<bombermanMap.col - 1; j++)
+        {
+            tile = bombermanMap.tiles[i][j];
+            if (tile.ty == Tile.type.OBSTACLE)
+                continue;
+//            tile = Tile.toTile(brick, bombermanMap);
+            name = tile.toString();
             x2 = tile.posCord.x;
             y2 = tile.posCord.y;
             value = (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-            if (brick.equals(s))
-                costHeur.put(brick, new float[]{0, value});
+            if (name.equals(s))
+                costHeur.put(name, new float[]{0, value});
             else
-                costHeur.put(brick, new float[]{Integer.MAX_VALUE, value});
+                costHeur.put(name, new float[]{Integer.MAX_VALUE, value});
 
         }
 
@@ -117,7 +122,6 @@ public class Astar {
         String predsor, temp;
         ArrayList<String> list;
         ArrayList<String> path = new ArrayList<String>();
-        ArrayList<String> expand = new ArrayList<String>();
         calHeuristic(s, end, h);
 
         start = new Node(s, 0, costHeur.get(s)[1]);
@@ -130,7 +134,6 @@ public class Astar {
 
             visited.add(current.name);
 
-            expand.add(current.name);
 
             if (current.name.equals(end))
                 break;
@@ -175,7 +178,6 @@ public class Astar {
 
         System.out.println("Path: " + Arrays.toString(path.toArray()));
         System.out.println("Cost: " + costHeur.get(end)[0]);
-        System.out.println("Nodes visited: " + expand.toString());
         return path;
     }
 

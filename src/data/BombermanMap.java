@@ -171,11 +171,6 @@ public class BombermanMap {
     }
 
     public Tile toTile(String s) {
-        int i, j;
-        String[] str = s.split(" ");
-
-        i = Integer.parseInt(str[0]);
-        j = Integer.parseInt(str[1]);
-        return tiles[i][j];
+        return PosNum.toTile(s, this);
     }
 }

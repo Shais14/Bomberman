@@ -273,7 +273,7 @@ public class Main extends PApplet {
             case EMPTY:
                 int tileX = bombermanMap.quantizeX(player.getPosition());
                 int tileY = bombermanMap.quantizeY(player.getPosition());
-                if (tileX == tile.posNum.x && tileY == tile.posNum.y) {
+                if (tileX == tile.posNum.colIndex && tileY == tile.posNum.rowIndex) {
                     player.die();
                 }
 

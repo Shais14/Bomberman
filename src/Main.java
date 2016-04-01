@@ -1,25 +1,40 @@
 
-import data.Const;
-import data.KinematicInfo;
-import data.PlayerInfo;
-import data.SteeringInfo;
+import data.*;
 import movement.Align;
 import movement.Arrive;
 import processing.core.*;
 import java.util.ArrayList;
 
 public class Main extends PApplet {
-    boolean DEBUG_FLAG = false;
-    PShape mainShape, circleShape, orientShape, crumbShape;
-    long lastAIComputeTime, lastCrumbDrawTime;
+    //Data Structures
+    BombermanMap bombermanMap;
     PlayerInfo player;
+
+    //Shapes to be rendered
+    PShape mainShape, circleShape, orientShape, crumbShape;
+    ArrayList<PVector> breadcrumbs;
+
+    //Steering behaviour info
     Arrive sArrive;
     Align sAlign;
     SteeringInfo steering;
-    ArrayList<PVector> breadcrumbs;
 
-    public void setup() {
-        PVector initialPos = new PVector(250, 250);
+    //Timing control values
+    long lastAIComputeTime, lastCrumbDrawTime;
+
+    //Colors used
+    public final int empty = color(125, 125, 125);
+    public final int brick = color(200, 100, 0);
+    public final int obs = color(100, 100, 0);
+    public final int treasure = color(0, 0, 0);
+
+    public void initializePlayer(PVector startingPoint) {
+        PVector initialPos;
+        if (startingPoint == null) {
+            initialPos = new PVector();
+        } else {
+            initialPos = startingPoint.copy();
+        }
 
         player = new PlayerInfo();
         player.setPosition(initialPos);
@@ -50,10 +65,10 @@ public class Main extends PApplet {
 
         steering = new SteeringInfo();
 
-        circleShape = createShape(ELLIPSE, 0, 0, 50, 50);
+        circleShape = createShape(ELLIPSE, 0, 0, 20, 20);
         circleShape.setFill(color(0));
 
-        orientShape = createShape(TRIANGLE, 0, -25, 0, 25, 50, 0);
+        orientShape = createShape(TRIANGLE, 0, -10, 0, 10, 15, 0);
         orientShape.setFill(color(0));
 
         mainShape = createShape(GROUP);
@@ -68,13 +83,7 @@ public class Main extends PApplet {
         lastCrumbDrawTime = System.currentTimeMillis();
     }
 
-    public void settings() {
-        size(500, 500);
-    }
-
-    public void draw() {
-        background(255);
-
+    public void drawPlayer() {
         long currentTime = System.currentTimeMillis();
 
         if ((currentTime - lastAIComputeTime > Const.AI_COMPUTE_TIME)) {
@@ -103,17 +112,39 @@ public class Main extends PApplet {
         popMatrix();
     }
 
-    public void mousePressed() {
-        PVector targetPos = new PVector(mouseX, mouseY);
-        KinematicInfo target = new KinematicInfo();
-        target.setPosition(targetPos);
+    public void drawMap() {
+        int i, j;
+        data.Tile tile;
+        rectMode(CENTER);
 
-        sArrive.setTarget(target);
-        sAlign.setTarget(target);
+        fill(treasure);
+        int temp[] = new int[2];
+        int space = bombermanMap.Treasure.indexOf(' ');
+        temp[0] = Integer.parseInt(bombermanMap.Treasure.substring(0, space));
+        temp[1] = Integer.parseInt(bombermanMap.Treasure.substring(space + 1,
+                bombermanMap.Treasure.length()));
 
-        PVector direction = PVector.sub(target.getPosition(), player.getPosition());
-        player.setRotation(0);
-        sAlign.getTarget().setOrientation(direction.heading());
+
+        tile = bombermanMap.tiles[temp[1]][temp[0]];
+        rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
+
+        for (i = 0; i < bombermanMap.row; i++) {
+            for (j = 0; j < bombermanMap.col; j++) {
+                tile = bombermanMap.tiles[i][j];
+                if (tile.ty == Tile.type.OBSTACLE) {
+                    fill(obs);
+                    stroke(0);
+                    strokeWeight(2);
+                } else if (tile.ty == Tile.type.BRICK) {
+                    stroke(0);
+                    fill(brick);
+                } else {
+                    fill(empty);
+                    noStroke();
+                }
+                rect(tile.posCord.x, tile.posCord.y, bombermanMap.tileSize, bombermanMap.tileSize);
+            }
+        }
     }
 
     void updateCrumbs() {
@@ -125,7 +156,7 @@ public class Main extends PApplet {
     }
 
     void drawCrumbs() {
-        for (PVector crumb: breadcrumbs) {
+        for (PVector crumb : breadcrumbs) {
             pushMatrix();
             translate(crumb.x, crumb.y);
             shape(crumbShape);
@@ -138,11 +169,69 @@ public class Main extends PApplet {
         sAlign.getSteering(steering);
     }
 
+    public void settings() {
+        size(600, 600);
+    }
+
+    public void setup() {
+        background(155);
+
+        bombermanMap = BombermanMap.initializeBombermanMap(width, height);
+
+        initializePlayer(bombermanMap.tiles[1][1].posCord);
+
+//        ArrayList<String> path = Astar.pathAstar(bricks.get(1), bricks.get(5), "E");
+    }
+
+    public void draw() {
+        drawMap();
+        drawPlayer();
+    }
+
+    public void move(PVector targetPos) {
+        KinematicInfo target = new KinematicInfo();
+        target.setPosition(targetPos.copy());
+
+        sArrive.setTarget(target);
+        sAlign.setTarget(target);
+
+        PVector direction = PVector.sub(target.getPosition(), player.getPosition());
+        player.setRotation(0);
+        sAlign.getTarget().setOrientation(direction.heading());
+    }
+
+    public void moveToTile(int tileX, int tileY) {
+        PVector targetPos = bombermanMap.getNewTileCords(tileX, tileY);
+
+        if (targetPos != null) {
+            // Valid move
+            move(targetPos);
+        }
+    }
+
+    public void keyPressed() {
+        int currPosX = bombermanMap.quantizeX(player.getPosition());
+        int currPosY = bombermanMap.quantizeY(player.getPosition());
+        if (keyPressed && key == CODED) {
+            switch (keyCode) {
+                case UP:
+                    moveToTile(currPosX, currPosY - 1);
+                    break;
+                case DOWN:
+                    moveToTile(currPosX, currPosY + 1);
+                    break;
+                case LEFT:
+                    moveToTile(currPosX - 1, currPosY);
+                    break;
+                case RIGHT:
+                    moveToTile(currPosX + 1, currPosY);
+                    break;
+                default:
+            }
+        }
+    }
 
     public static void main(String[] args) {
-        {
-            PApplet.main(new String[]{"--present", "Main"});
-        }
-
+        PApplet.main(new String[]{"--present", "Main"});
     }
 }

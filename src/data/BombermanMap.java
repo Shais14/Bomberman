@@ -1,5 +1,6 @@
 package data;
 
+import debug.DebugUtil;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class BombermanMap {
             if (x % 2 == 0 && y % 2 == 0)
                 continue;
 
-            temp = String.valueOf(x) + " " + String.valueOf(y);
+            temp = String.valueOf(y) + " " + String.valueOf(x);
 
             if (bricks.contains(temp))
                 continue;
@@ -147,6 +148,7 @@ public class BombermanMap {
                 }
             }
         }
+//        DebugUtil.printEdges(this);
         addTreasure(bricks);
 //        System.out.println(Treasure);
 

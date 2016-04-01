@@ -43,6 +43,9 @@ public interface Const extends PConstants {
 
     float TIME_TARGET_ROTATION = 0.05f;
 
+
+    float BOMB_DETONATION_TIME = 5000;
+
 //    float WANDER_OFFSET = 100;
 //    float WANDER_RADIUS = 50;
 //    float WANDER_RATE = 4 * PI;

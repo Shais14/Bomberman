@@ -2,7 +2,10 @@
 import data.*;
 import movement.Align;
 import movement.Arrive;
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PShape;
+import processing.core.PVector;
+
 import java.util.ArrayList;
 
 public class Main extends PApplet {
@@ -10,8 +13,12 @@ public class Main extends PApplet {
     BombermanMap bombermanMap;
     PlayerInfo player;
 
+    int blastRadius = 1;
+
     //Shapes to be rendered
     PShape mainShape, circleShape, orientShape, crumbShape;
+    PShape bombShape;
+    PVector bombPos;
     ArrayList<PVector> breadcrumbs;
 
     //Steering behaviour info
@@ -20,7 +27,7 @@ public class Main extends PApplet {
     SteeringInfo steering;
 
     //Timing control values
-    long lastAIComputeTime, lastCrumbDrawTime;
+    long lastAIComputeTime, lastCrumbDrawTime, bombPlantTime;
 
     //Colors used
     public final int empty = color(125, 125, 125);
@@ -79,8 +86,18 @@ public class Main extends PApplet {
         crumbShape.setFill(color(64));
         breadcrumbs = new ArrayList<PVector>();
 
+        bombShape = createShape(ELLIPSE, 0, 0, 10, 10);
+        bombShape.setFill(color(127, 0, 0));
+
         lastAIComputeTime = System.currentTimeMillis();
         lastCrumbDrawTime = System.currentTimeMillis();
+    }
+
+    public void drawBomb() {
+        pushMatrix();
+        translate(bombPos.x, bombPos.y);
+        shape(bombShape);
+        popMatrix();
     }
 
     public void drawPlayer() {
@@ -186,6 +203,16 @@ public class Main extends PApplet {
     public void draw() {
         drawMap();
         drawPlayer();
+
+        if (bombPos != null) {
+            drawBomb();
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - bombPlantTime > Const.BOMB_DETONATION_TIME) {
+                detonateBomb();
+                bombPos = null;
+            }
+        }
     }
 
     public void move(PVector targetPos) {
@@ -209,11 +236,59 @@ public class Main extends PApplet {
         }
     }
 
+    public void plantBomb(int tileX, int tileY) {
+        Tile tile = bombermanMap.tiles[tileY][tileX];
+        bombPos = tile.posCord.copy();
+        bombPlantTime = System.currentTimeMillis();
+    }
+
+    public void detonateBomb() {
+        int tileX = bombermanMap.quantizeX(bombPos);
+        int tileY = bombermanMap.quantizeY(bombPos);
+
+        Tile bombedTile = bombermanMap.tiles[tileY][tileX];
+        //TODO: Check the way the edges are set up
+        ArrayList<String> outgoingEdges = bombermanMap.edges.get(tileY + " " + tileX);
+        destroyAllOnTile(tileY + " " + tileX);
+        for (int i = 0; i < outgoingEdges.size(); i += 2) {
+            String tileStr = outgoingEdges.get(i);
+            destroyAllOnTile(tileStr);
+        }
+    }
+
+    /**
+     * Method to modify states of all objects (player, enemy, brick) on a particular tile
+     *
+     * @param s String indicating a particular tile
+     */
+    public void destroyAllOnTile(String s) {
+        Tile tile = bombermanMap.toTile(s);
+        switch (tile.ty) {
+            case BRICK:
+                //TODO: Maybe animate this?
+                tile.ty = Tile.type.EMPTY;
+                break;
+            case OBSTACLE:
+                break;
+            case EMPTY:
+                int tileX = bombermanMap.quantizeX(player.getPosition());
+                int tileY = bombermanMap.quantizeY(player.getPosition());
+                if (tileX == tile.posNum.x && tileY == tile.posNum.y) {
+                    player.die();
+                }
+
+                //TODO: Destroy enemy also
+                break;
+        }
+    }
+
     public void keyPressed() {
         int currPosX = bombermanMap.quantizeX(player.getPosition());
         int currPosY = bombermanMap.quantizeY(player.getPosition());
-        if (keyPressed && key == CODED) {
-            switch (keyCode) {
+        if (keyPressed) {
+            int activeKey = (key == CODED) ? keyCode : key;
+
+            switch (activeKey) {
                 case UP:
                     moveToTile(currPosX, currPosY - 1);
                     break;
@@ -225,6 +300,9 @@ public class Main extends PApplet {
                     break;
                 case RIGHT:
                     moveToTile(currPosX + 1, currPosY);
+                    break;
+                case ' ':
+                    plantBomb(currPosX, currPosY);
                     break;
                 default:
             }

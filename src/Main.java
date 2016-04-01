@@ -1,10 +1,6 @@
 
-import algorithms.Astar;
 import data.*;
-import movement.Align;
-import movement.Arrive;
 import processing.core.PApplet;
-import processing.core.PShape;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -17,9 +13,7 @@ public class Main extends PApplet {
 
     int blastRadius = 1;
 
-    //Shapes to be rendered
-    PShape bombShape;
-    PVector bombPos;
+    Bomb activeBomb;
 
     //Timing control values
     long bombPlantTime;
@@ -30,16 +24,6 @@ public class Main extends PApplet {
 
         enemy = new Enemy(this);
         enemy.initialize(enemyStartingPoint);
-
-        bombShape = createShape(ELLIPSE, 0, 0, 10, 10);
-        bombShape.setFill(color(127, 0, 0));
-    }
-
-    public void drawBomb() {
-        pushMatrix();
-        translate(bombPos.x, bombPos.y);
-        shape(bombShape);
-        popMatrix();
     }
 
     public void settings() {
@@ -63,13 +47,13 @@ public class Main extends PApplet {
         player.draw();
         enemy.draw();
 
-        if (bombPos != null) {
-            drawBomb();
+        if (activeBomb != null) {
+            activeBomb.draw();
 
             long currentTime = System.currentTimeMillis();
             if (currentTime - bombPlantTime > Const.BOMB_DETONATION_TIME) {
-                detonateBomb();
-                bombPos = null;
+                detonate();
+                activeBomb = null;
             }
         }
 
@@ -81,25 +65,6 @@ public class Main extends PApplet {
         if (targetPos != null) {
             // Valid move
             player.move(targetPos);
-        }
-    }
-
-    public void plantBomb(int tileX, int tileY) {
-        Tile tile = bombermanMap.tiles[tileY][tileX];
-        bombPos = tile.posCord.copy();
-        bombPlantTime = System.currentTimeMillis();
-    }
-
-    public void detonateBomb() {
-        int tileX = bombermanMap.quantizeX(bombPos);
-        int tileY = bombermanMap.quantizeY(bombPos);
-
-        Tile bombedTile = bombermanMap.tiles[tileY][tileX];
-        ArrayList<String> outgoingEdges = bombermanMap.edges.get(bombedTile.toString());
-        destroyAllOnTile(bombedTile.toString());
-        for (int i = 0; i < outgoingEdges.size(); i += 2) {
-            String tileStr = outgoingEdges.get(i);
-            destroyAllOnTile(tileStr);
         }
     }
 
@@ -116,6 +81,20 @@ public class Main extends PApplet {
         int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
         if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
             enemy.die();
+        }
+    }
+
+
+    public void detonate() {
+        int tileX = bombermanMap.quantizeX(activeBomb.bombPos);
+        int tileY = bombermanMap.quantizeY(activeBomb.bombPos);
+
+        Tile bombedTile = bombermanMap.tiles[tileY][tileX];
+        ArrayList<String> outgoingEdges = bombermanMap.edges.get(bombedTile.toString());
+        destroyAllOnTile(bombedTile.toString());
+        for (int i = 0; i < outgoingEdges.size(); i += 2) {
+            String tileStr = outgoingEdges.get(i);
+            destroyAllOnTile(tileStr);
         }
     }
 
@@ -159,7 +138,10 @@ public class Main extends PApplet {
                     moveToTile(currPosX + 1, currPosY);
                     break;
                 case ' ':
-                    plantBomb(currPosX, currPosY);
+                    if (activeBomb == null) {
+                        activeBomb = Bomb.plantBomb(bombermanMap.tiles[currPosY][currPosX], this);
+                        bombPlantTime = System.currentTimeMillis();
+                    }
                     break;
                 default:
             }

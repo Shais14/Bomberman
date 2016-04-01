@@ -205,7 +205,7 @@ public class BombermanMap {
         }
 
 
-        DebugUtil.printSignalStrength(this);
+//        DebugUtil.printSignalStrength(this);
 
     }
 

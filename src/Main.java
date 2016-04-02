@@ -9,7 +9,9 @@ public class Main extends PApplet {
     //Data Structures
     BombermanMap bombermanMap;
     PlayerInfo player;
+    Text text;
     Enemy enemy;
+
 
     int blastRadius = 1;
 
@@ -35,6 +37,8 @@ public class Main extends PApplet {
 
         bombermanMap = BombermanMap.initializeBombermanMap(this);
         initializeCharacters(bombermanMap.tiles[1][1].posCord, bombermanMap.tiles[13][13].posCord);
+
+        text = new Text(this);
     }
 
 //    public void mousePressed()
@@ -46,6 +50,7 @@ public class Main extends PApplet {
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
+        text.draw(player);
         enemy.draw();
 
         if (activeBomb != null) {

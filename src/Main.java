@@ -44,6 +44,7 @@ public class Main extends PApplet {
 
     public void draw() {
         bombermanMap.draw();
+        bombermanMap.drawSignal();
         player.draw();
         enemy.draw();
 

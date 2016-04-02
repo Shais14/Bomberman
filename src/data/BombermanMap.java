@@ -201,7 +201,7 @@ public class BombermanMap {
         int rk = Trea.posNum.rowIndex;
         int ck = Trea.posNum.colIndex;
 
-        int d = 1;
+        int d = 0;
 
         switch(d) {
             case 0: {
@@ -272,19 +272,10 @@ public class BombermanMap {
                           }
 
                                 if(k>5) {      signalStrengthOuter--;}
-
                         }
-
-
-
-
-
-
-
-
            }
         }
-        DebugUtil.printSignalStrength(this);
+//        DebugUtil.printSignalStrength(this);
 
     }
 
@@ -339,4 +330,44 @@ public class BombermanMap {
             }
         }
     }
+
+    public void drawSignal(){
+
+        Tile Trea = toTile(Treasure);
+
+
+        int flag[][] = new int[15][15];
+
+        int rk = Trea.posNum.rowIndex;
+        int ck = Trea.posNum.colIndex;
+
+        for (int k = 1; k <= 5; k++) {
+
+            int level = k;
+            int lextreme = rk - level;
+            if (lextreme < 1) lextreme = 1;
+            int rextreme = rk + level;
+            if (rextreme > 13) rextreme = 13;
+            int textreme = ck - level;
+            if (textreme < 1) textreme = 1;
+            int bextreme = ck + level;
+            if (bextreme > 13) bextreme = 13;
+
+            for (int r = lextreme; r <= rextreme; r++) {
+                for (int c = textreme; c <= bextreme; c++) {
+                    if (flag[r][c] == 0) {
+
+                        int transparency = tiles[r][c].signal ;
+                        parent.noStroke();
+                        parent.fill(0, 0, 255, transparency);
+                        parent.rect(tiles[r][c].posCord.x, tiles[r][c].posCord.y, tileSize, tileSize);
+                        flag[r][c] = 1;
+                    }
+                }
+            }
+        }
+    }
 }
+
+
+

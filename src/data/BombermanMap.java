@@ -195,40 +195,96 @@ public class BombermanMap {
 
         int flag[][] = new int[15][15];
 
-        int signalStrength = 50;
+        int signalStrengthInner;
+        int signalStrengthOuter;
 
         int rk = Trea.posNum.rowIndex;
         int ck = Trea.posNum.colIndex;
 
+        int d = 1;
 
-        for(int k = 1; k <=5; k++){
+        switch(d) {
+            case 0: {
+                signalStrengthInner = 50;
 
-            int level = k;
-            int lextreme = rk-level;
-            if(lextreme < 1 ) lextreme =1;
-            int rextreme = rk+level;
-            if(rextreme > 13 ) rextreme =13;
-            int textreme = ck-level;
-            if(textreme < 1 ) textreme = 1;
-            int bextreme = ck+level;
-            if(bextreme > 13 ) bextreme = 13;
+                for (int k = 1; k <= 5; k++) {
 
-        for(int r = lextreme; r <=rextreme; r++){
-        for(int c = textreme; c <=bextreme; c++) {
-            if(r == rk && c == ck){
-                tiles[r][c].signal = 100;
+                    int level = k;
+                    int lextreme = rk - level;
+                    if (lextreme < 1) lextreme = 1;
+                    int rextreme = rk + level;
+                    if (rextreme > 13) rextreme = 13;
+                    int textreme = ck - level;
+                    if (textreme < 1) textreme = 1;
+                    int bextreme = ck + level;
+                    if (bextreme > 13) bextreme = 13;
+
+                    for (int r = lextreme; r <= rextreme; r++) {
+                        for (int c = textreme; c <= bextreme; c++) {
+                            if (r == rk && c == ck) {
+                                tiles[r][c].signal = 100;
+                            }
+                            if (flag[r][c] == 0) {
+                                tiles[r][c].signal = signalStrengthInner;
+                                flag[r][c] = 1;
+                            }
+                        }
+                    }
+                    signalStrengthInner -= 10;
+                }
             }
-            if(flag[r][c] == 0) {
-                tiles[r][c].signal = signalStrength;
-                flag[r][c] = 1;
-            }
-        }
-        }
-            signalStrength -= 10;
-        }
+
+            case 1:
+            {
+                signalStrengthInner = 50;
+                signalStrengthOuter = 15;
+                        for (int k = 1; k <= 14; k++) {
+
+                            int level = k;
+                            int lextreme = rk - level;
+                            if (lextreme < 1) lextreme = 1;
+                            int rextreme = rk + level;
+                            if (rextreme > 13) rextreme = 13;
+                            int textreme = ck - level;
+                            if (textreme < 1) textreme = 1;
+                            int bextreme = ck + level;
+                            if (bextreme > 13) bextreme = 13;
+
+                            for (int r = lextreme; r <= rextreme; r++) {
+                                for (int c = textreme; c <= bextreme; c++) {
+
+                                    if(k<=5) {
+                                        if (r == rk && c == ck) {
+                                            tiles[r][c].signal = 100;
+                                        }
+                                        if (flag[r][c] == 0) {
+                                            tiles[r][c].signal = signalStrengthInner;
+                                            flag[r][c] = 1;
+                                        }
+                                    }
+                                    else{
+                                        if(flag[r][c] == 0) {
+                                            tiles[r][c].signal = signalStrengthOuter;
+                                            flag[r][c] = 1;
+                                        }
+                                    }
+                                }
+                          }
+
+                                if(k>5) {      signalStrengthOuter--;}
+
+                        }
 
 
-//        DebugUtil.printSignalStrength(this);
+
+
+
+
+
+
+           }
+        }
+        DebugUtil.printSignalStrength(this);
 
     }
 

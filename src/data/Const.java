@@ -26,7 +26,7 @@ public interface Const extends PConstants {
     int CRUMB_DRAW_TIME = 250;
 
     // Maximum values that should be allowed for a player
-    float MAX_SPEED = 50f;
+    float MAX_SPEED = 100f;
     float MAX_ROTATION = -PI;
     float MAX_LINEAR_ACCELERATION = 12.5f;
     float MAX_ANGULAR_ACCELERATION = - PI / 1.5f;
@@ -44,7 +44,7 @@ public interface Const extends PConstants {
     float TIME_TARGET_ROTATION = 0.05f;
 
 
-    float BOMB_DETONATION_TIME = 5000;
+    float BOMB_DETONATION_TIME = 2000;
 
 //    float WANDER_OFFSET = 100;
 //    float WANDER_RADIUS = 50;

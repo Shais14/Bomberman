@@ -1,0 +1,34 @@
+# This file represents the hand-authored decision tree to be used by the bot playing Bomberman.
+# The syntax of this file is as follows -
+# 	<nodeCode> <childCount>
+# 	<firstChildCode> <childCount of firstChild>
+# 	<firstGrandChild> <childCount of firstGrandChild>
+# 	...
+# 	<secondChild> <childCount of secondChild>
+# 	...
+#
+# The codes are -
+# 	 EVAL_NEXT_TILE_EMPTY = 1					(Is next tile empty?)
+# 	 EVAL_NEXT_TILE_BRICK = 2					(Is next tile brick?)
+# 	 EVAL_KEY_FOUND = 3      					(Has the key been found?)
+#
+# 	 ACT_PATH_FIND_AND_FOLLOW = 101				(Find path to target and follow that path)
+# 	 ACT_MOVE_NEXT_TILE = 102					(Move to the next tile)
+# 	 ACT_PLANT_AND_MOVE_UNEXPLORED = 103		(Plant bomb and move to an unexplored tile outside of the bomb's blast radius)
+# 	 ACT_PICK_NEW_DIR = 104						(Pick a new direction, and rotate to it)
+
+# Wander decisions
+3 2
+# First child of 3
+101
+# Second child of 3 - 1
+1 2
+# First child of 1
+102
+# Second child of 1 - 2
+2 2
+# First child of 2
+103
+# Second child of 2
+104
+

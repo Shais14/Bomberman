@@ -94,4 +94,6 @@ public interface Const extends PConstants {
 
         String DECISION_TREE_FILE_NAME = "decisionTree.txt";
     }
+
+    int USE_LOGS = 0;
 }

@@ -91,6 +91,6 @@ public interface Const extends PConstants {
         int CURR_TILE_KEY = 6;
         int NEXT_TILE_KEY = 7;
 
-        String DECISION_TREE_FILE_NAME = "C:\\Users\\Anand\\IdeaProjects\\CSC584\\Final Project\\Bomberman\\decisionTree.txt";
+        String DECISION_TREE_FILE_NAME = "decisionTree.txt";
     }
 }

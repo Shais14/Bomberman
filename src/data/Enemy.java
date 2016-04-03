@@ -9,8 +9,8 @@ public class Enemy extends Character {
     public Enemy() {
     }
 
-    public Enemy(PApplet parent) {
-        super(parent);
+    public Enemy(BombermanMap map, PApplet parent) {
+        super(map, parent);
     }
 
     @Override

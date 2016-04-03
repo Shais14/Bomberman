@@ -90,6 +90,7 @@ public interface Const extends PConstants {
         int CURR_CHAR_KEY = 5;
         int CURR_TILE_KEY = 6;
         int NEXT_TILE_KEY = 7;
+        int BOMB_KEY = 8;
 
         String DECISION_TREE_FILE_NAME = "decisionTree.txt";
     }

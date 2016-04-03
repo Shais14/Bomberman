@@ -185,6 +185,9 @@ public abstract class Character {
         if (node instanceof Action) {
             return (Action) node;
         }
+        if (node == null) {
+            return null;
+        }
         DTreeNode nextNode = ((Evaluation)node).evaluate(paramMap);
         return evaluateNode(nextNode, paramMap);
     }

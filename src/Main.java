@@ -70,7 +70,7 @@ public class Main extends PApplet {
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
-        NodePlus2();
+//        NodePlus2();
         text.draw(player);
         enemy.draw();
 
@@ -85,6 +85,7 @@ public class Main extends PApplet {
         }
 
         paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, bombermanMap.getTileAt(player.kinematicInfo.getPosition()));
+        paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
 
         // TODO: Check if this prediction is correct
         PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));

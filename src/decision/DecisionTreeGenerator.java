@@ -60,8 +60,6 @@ public class DecisionTreeGenerator {
                     }
                 }
             }
-        } else {
-            System.out.println(nodeCode);
         }
 
         if (parentNode == null) {

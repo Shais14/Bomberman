@@ -23,6 +23,7 @@ public class BombermanMap {
     public HashMap<String, ArrayList<String>> edges;
     public String Treasure;
 
+
     //Colors used
     public int empty;
     public int brick;
@@ -55,6 +56,11 @@ public class BombermanMap {
         Random r = new Random();
         int TreasurePos = r.nextInt(bricks.size());
         Treasure = bricks.get(TreasurePos);
+    }
+
+    public boolean isTreaureVisible()
+    {
+        return Tile.toTile(Treasure, this).ty==Tile.type.EMPTY;
     }
 
     public ArrayList<String> addBricks() {

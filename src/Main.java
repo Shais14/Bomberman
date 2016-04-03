@@ -30,7 +30,7 @@ public class Main extends PApplet {
     ArrayList<Character> allCharacters;
 
     public void initializeCharacters(PVector startingPoint, PVector enemyStartingPoint) {
-        player = new PlayerInfo(this);
+        player = new PlayerInfo(this, bombermanMap);
         player.initialize(startingPoint);
         player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
 
@@ -227,6 +227,8 @@ public class Main extends PApplet {
         } while (!hasEdge);
 
         processedList.clear();
+
+        processedList.add(current);
 
         System.out.print("Current " + current);
 

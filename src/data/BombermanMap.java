@@ -241,7 +241,7 @@ public class BombermanMap {
                     signalStrengthInner -= 10;
                 }
             }
-
+            break;
             case 1:
             {
                 signalStrengthInner = 50;
@@ -282,6 +282,14 @@ public class BombermanMap {
                                 if(k>variationDistance) {      signalStrengthOuter--;}
                         }
            }
+            break;
+            case 2:
+                for (int i = 0; i < row; i++) {
+                    for (int j = 0; j < col; j++) {
+                        Tile currTile = tiles[i][j];
+                        currTile.signal = 0;
+                    }
+                }
         }
 //        DebugUtil.printSignalStrength(this);
 

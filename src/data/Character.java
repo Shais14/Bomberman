@@ -141,17 +141,6 @@ public abstract class Character {
         sAlign.getTarget().setOrientation(direction.heading());
     }
 
-    public void pathFollow(ArrayList<Tile> path)
-    {
-        Tile tile;
-        for(int i = 0; i<path.size(); i++)
-        {
-            tile = path.get(i);
-            move(tile.posCord);
-
-        }
-    }
-
     public void turn(float newAngle) {
         KinematicInfo target = new KinematicInfo();
         target.setOrientation(newAngle);

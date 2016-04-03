@@ -184,4 +184,18 @@ public class Astar {
         return path;
     }
 
+    public ArrayList<Tile> getTiles(ArrayList<String> path)
+    {
+        String str;
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+        for (int i = 0; i < path.size(); i++)
+        {
+            str = path.get(i);
+            tiles.add(Tile.toTile(str, bombermanMap));
+        }
+
+        return tiles;
+    }
+
 }

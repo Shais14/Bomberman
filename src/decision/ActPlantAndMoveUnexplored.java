@@ -16,6 +16,9 @@ import java.util.HashMap;
 public class ActPlantAndMoveUnexplored extends Action {
     BombermanMap map;
     PlayerInfo player;
+    ArrayList<Tile> pathTiles;
+    int currentTargetIndex;
+    Action subAction;
 
     @Override
     public void performAction(HashMap<Integer, Object> paramMap) {
@@ -23,7 +26,7 @@ public class ActPlantAndMoveUnexplored extends Action {
         String curr, brick;
         Tile currTile;
         ArrayList<String> path;
-        ArrayList<Tile> pathTiles;
+
         Astar astar;
 
         map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
@@ -34,31 +37,19 @@ public class ActPlantAndMoveUnexplored extends Action {
         currTile = Tile.toTile(curr, map);
         Bomb.plantBomb(currTile, map.parent);
 
-        brick = findBrick(currTile.posNum);
+        brick = findUnexploredBrick(currTile.posNum);
         astar = new Astar(map);
         path = astar.pathAstar(curr, brick, "E");
-        pathTiles = getTiles(path);
+        pathTiles = astar.getTiles(path);
+        currentTargetIndex = 0;
         pathTiles.remove(pathTiles.size() - 1);
-        player.pathFollow(pathTiles);
 
-
+        subAction = new ActMoveNextTile();
+        paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
+        subAction.performAction(paramMap);
     }
 
-    public ArrayList<Tile> getTiles(ArrayList<String> path)
-    {
-        String str;
-        ArrayList<Tile> tiles = new ArrayList<Tile>();
-
-        for (int i = 0; i < path.size(); i++)
-        {
-            str = path.get(i);
-            tiles.add(Tile.toTile(str, map));
-        }
-
-        return tiles;
-    }
-
-    public String findBrick(PosNum pos) {
+    public String findUnexploredBrick(PosNum pos) {
         int i, j = 0, currPosX =  pos.colIndex, currPosY = pos.rowIndex,  level= 1;
         String str;
         boolean flag = true;
@@ -93,6 +84,17 @@ public class ActPlantAndMoveUnexplored extends Action {
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
+        if (subAction.hasCompleted(paramMap)) {
+            if (currentTargetIndex + 1 < pathTiles.size()) {
+                currentTargetIndex++;
+                subAction = new ActMoveNextTile();
+                paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
+                subAction.performAction(paramMap);
+                return false;
+            } else {
+                return true;
+            }
+        }
         return false;
     }
 

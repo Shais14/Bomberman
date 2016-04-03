@@ -22,10 +22,11 @@ public abstract class Character {
     Arrive sArrive;
     Align sAlign;
     SteeringInfo steering;
+    public BombermanMap map;
 
     PShape mainShape, crumbShape;
     ArrayList<PVector> breadCrumbs;
-    PApplet parent;
+    public PApplet parent;
 
     public DTreeNode decisionTreeHead;
     public boolean isPerformingAction;
@@ -37,7 +38,8 @@ public abstract class Character {
 
     }
 
-    public Character(PApplet parent) {
+    public Character(BombermanMap map, PApplet parent) {
+        this.map = map;
         this.parent = parent;
     }
 
@@ -137,6 +139,17 @@ public abstract class Character {
         PVector direction = PVector.sub(target.getPosition(), kinematicInfo.getPosition());
         kinematicInfo.setRotation(0);
         sAlign.getTarget().setOrientation(direction.heading());
+    }
+
+    public void pathFollow(ArrayList<Tile> path)
+    {
+        Tile tile;
+        for(int i = 0; i<path.size(); i++)
+        {
+            tile = path.get(i);
+            move(tile.posCord);
+
+        }
     }
 
     public void turn(float newAngle) {

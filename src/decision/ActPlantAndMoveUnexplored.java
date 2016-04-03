@@ -1,7 +1,11 @@
 package decision;
 
+import algorithms.Astar;
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import data.*;
+import processing.core.PVector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static sun.audio.AudioPlayer.player;
@@ -18,21 +22,52 @@ public class ActPlantAndMoveUnexplored extends Action {
 
     @Override
     public void performAction(HashMap<Integer, Object> paramMap) {
+        int currPosX, currPosY;
+        String curr, brick;
+        Tile currTile;
+        ArrayList<String> path;
+        ArrayList<Tile> pathTiles;
+        Astar astar;
 
         map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
         player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
-        Tile brick = findBrick();
+        currPosX = map.quantizeX(player.kinematicInfo.getPosition());
+        currPosY = map.quantizeY(player.kinematicInfo.getPosition());
+        curr = currPosX + " " + currPosY;
+        currTile = Tile.toTile(curr, map);
+        Bomb.plantBomb(currTile, map.parent);
+
+        brick = findBrick(currTile.posNum);
+        astar = new Astar(map);
+        path = astar.pathAstar(curr, brick, "E");
+        pathTiles = getTiles(path);
+        pathTiles.remove(pathTiles.size() - 1);
+        player.pathFollow(pathTiles);
+
 
     }
 
-    public Tile findBrick() {
-        int i, j = 0, level = 1;
+    public ArrayList<Tile> getTiles(ArrayList<String> path)
+    {
+        String str;
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+        for (int i = 0; i<path.size(); i++)
+        {
+            str = path.get(i);
+            tiles.add(Tile.toTile(str, map));
+        }
+
+        return tiles;
+    }
+
+    public String findBrick(PosNum pos) {
+        int i, j = 0, currPosX =  pos.colIndex, currPosY = pos.rowIndex,  level= 1;
         String str;
         boolean flag = true;
+        int minDist = 2;
 
         Tile tile;
-        int currPosX = map.quantizeX(player.kinematicInfo.getPosition());
-        int currPosY = map.quantizeY(player.kinematicInfo.getPosition());
 
 
         do {
@@ -41,7 +76,8 @@ public class ActPlantAndMoveUnexplored extends Action {
                 if (i < 0 || i >= map.row)
                     continue;
                 for (j = currPosY - level; j <= currPosY + level; j++) {
-                    if (j > 0 && j < map.col && map.tiles[i][j].ty == Tile.type.BRICK) {
+                    if (j > 0 && j < map.col && map.tiles[i][j].ty == Tile.type.BRICK
+                            && Math.abs(i - currPosY) + Math.abs(j - currPosY)>=minDist) {
                         flag = false;
                         break;
                     }
@@ -53,8 +89,7 @@ public class ActPlantAndMoveUnexplored extends Action {
         } while (flag);
 
         str = i + " " + j;
-        tile = Tile.toTile(str, map);
-        return tile;
+        return str;
 
     }
 

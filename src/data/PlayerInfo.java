@@ -16,11 +16,10 @@ import java.util.ArrayList;
 public class PlayerInfo extends Character {
     public int lives;
     public int score;
-    public BombermanMap map;
     public boolean explored[][];
 //    public Tile current;
 //    public Tile parent;
-    public ArrayList<String> moveList;
+    public ArrayList<Tile> moveList;
 
     public PlayerInfo() {
         super();
@@ -31,10 +30,9 @@ public class PlayerInfo extends Character {
     }
 
     public PlayerInfo(PApplet parent, BombermanMap map) {
-        super(parent);
+        super(map, parent);
         lives = 3;
         score = 0;
-        this.map = map;
         explored = new boolean[map.row][map.col];
 
     }

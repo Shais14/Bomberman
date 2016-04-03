@@ -11,9 +11,9 @@ import java.util.*;
  * Created by Anand on 4/1/2016.
  */
 public class Astar {
-    public static BombermanMap bombermanMap;
 
-    static HashMap<String, float[]> costHeur = new HashMap<String, float[]>();
+    public BombermanMap bombermanMap;
+    public HashMap<String, float[]> costHeur = new HashMap<String, float[]>();
 
     static class PQsort implements Comparator<Node> {
         public int compare(Node one, Node two) {
@@ -21,7 +21,12 @@ public class Astar {
         }
     }
 
-    public static void calHeuristic(String s, String e, String h) {
+    public Astar(BombermanMap bombermanMap)
+    {
+        this.bombermanMap = bombermanMap;
+    }
+
+    public void calHeuristic(String s, String e, String h) {
         ArrayList<String> str, strEnd;
         String name;
         Tile tile;
@@ -110,8 +115,7 @@ public class Astar {
 
     }
 
-    public static ArrayList<String> pathAstar(String s, String end, String h, BombermanMap map) {
-        bombermanMap = map;
+    public ArrayList<String> pathAstar(String s, String end, String h) {
         HashSet<String> visited = new HashSet<String>();
         PQsort pqs = new PQsort();
         PriorityQueue<Node> open = new PriorityQueue<Node>(10, pqs);
@@ -133,7 +137,6 @@ public class Astar {
             costsofar = current.cost;
 
             visited.add(current.name);
-
 
             if (current.name.equals(end))
                 break;

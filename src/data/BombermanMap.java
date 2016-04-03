@@ -32,7 +32,7 @@ public class BombermanMap {
     public int obs;
     public int treasure;
 
-    PApplet parent;
+    public PApplet parent;
 
     public BombermanMap() {
 

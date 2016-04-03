@@ -91,15 +91,15 @@ public class Main extends PApplet {
         PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
         paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
 
-        if (isNextDTreeEvalReqd()) {
-            paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
-            Action nextAction = player.evaluateDTree(paramMap);
-            if (nextAction != null) {
-                player.isPerformingAction = true;
-                player.currAction = nextAction;
-                nextAction.performAction(paramMap);
-            }
-        }
+//        if (isNextDTreeEvalReqd()) {
+//            paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
+//            Action nextAction = player.evaluateDTree(paramMap);
+//            if (nextAction != null) {
+//                player.isPerformingAction = true;
+//                player.currAction = nextAction;
+//                nextAction.performAction(paramMap);
+//            }
+//        }
 
     }
 
@@ -232,7 +232,7 @@ public class Main extends PApplet {
 
         processedList.add(current);
 
-        System.out.print("Current " + current);
+//        System.out.print("Current " + current);
 
 
         hasEdge = false;
@@ -260,7 +260,7 @@ public class Main extends PApplet {
 
         processedList.clear();
 
-        System.out.println(" Target " +target);
+//        System.out.println(" Target " +target);
 
     }
 

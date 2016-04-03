@@ -38,7 +38,7 @@ public abstract class Character {
 
     }
 
-    public Character(BombermanMap map, PApplet parent) {
+    public Character(PApplet parent, BombermanMap map) {
         this.map = map;
         this.parent = parent;
     }

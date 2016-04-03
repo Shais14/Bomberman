@@ -34,7 +34,7 @@ public class Main extends PApplet {
         player.initialize(startingPoint);
         player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
 
-        enemy = new Enemy(this);
+        enemy = new Enemy(this, bombermanMap);
         enemy.initialize(enemyStartingPoint);
     }
 

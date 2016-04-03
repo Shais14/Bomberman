@@ -1,7 +1,6 @@
 package data;
 
 import processing.core.PApplet;
-import processing.core.PVector;
 
 /**
  * Created by Anand on 4/1/2016.
@@ -19,4 +18,7 @@ public class Enemy extends Character {
         //TODO: Implement this function (kill the enemy)
     }
 
+    void computeAI() {
+
+    }
 }

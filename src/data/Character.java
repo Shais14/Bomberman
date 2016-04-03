@@ -1,5 +1,8 @@
 package data;
 
+import decision.Action;
+import decision.DTreeNode;
+import decision.Evaluation;
 import movement.Align;
 import movement.Arrive;
 import processing.core.PApplet;
@@ -7,6 +10,7 @@ import processing.core.PShape;
 import processing.core.PVector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class represents any character in the game that can move, and can be rendered
@@ -23,7 +27,9 @@ public abstract class Character {
     ArrayList<PVector> breadCrumbs;
     PApplet parent;
 
-    long lastAIComputeTime, lastCrumbDrawTime, bombPlantTime;
+    public DTreeNode decisionTreeHead;
+
+    long lastAIComputeTime, lastCrumbDrawTime;
 
     public Character() {
 
@@ -151,5 +157,17 @@ public abstract class Character {
     void computeAI() {
         steering = sArrive.getSteering();
         sAlign.getSteering(steering);
+    }
+
+    public Action evaluateDTree(HashMap<Integer, Object> paramMap) {
+        return evaluateNode(decisionTreeHead, paramMap);
+    }
+
+    public Action evaluateNode(DTreeNode node, HashMap<Integer, Object> paramMap) {
+        if (node instanceof Action) {
+            return (Action) node;
+        }
+        DTreeNode nextNode = ((Evaluation)node).evaluate(paramMap);
+        return evaluateNode(nextNode, paramMap);
     }
 }

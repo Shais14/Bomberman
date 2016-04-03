@@ -1,9 +1,6 @@
 package decision;
 
-import data.BombermanMap;
-import data.Const;
-import data.PlayerInfo;
-import data.Tile;
+import data.*;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -33,7 +30,7 @@ public class ActPickNewDir extends Action {
 
             String newNextTileStr = adjList.get(nextDir * 2);
             newNextTile = Tile.toTile(newNextTileStr, map);
-        } while (newNextTile.ty != Tile.type.EMPTY && newNextTile != nextTile);
+        } while (newNextTile.ty == Tile.type.OBSTACLE || newNextTile == nextTile);
 
         dirOrientation = PVector.angleBetween(newNextTile.posCord, player.kinematicInfo.getPosition());
         player.turn(newNextTile.posCord);
@@ -43,7 +40,8 @@ public class ActPickNewDir extends Action {
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
 
-        return (player.kinematicInfo.getOrientation() - dirOrientation) <= Const.LINEAR_EPSILON;
+        return player.sAlign.checkOrientationReached();
+//        return Math.abs(Helper.mapToRange(player.kinematicInfo.getOrientation() - dirOrientation)) <= Const.ANGULAR_RADIUS_SATISFACTION;
     }
 
     public String toString() {

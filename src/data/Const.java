@@ -35,7 +35,7 @@ public interface Const extends PConstants {
     float LINEAR_RADIUS_SATISFACTION = 0.5f;
     float LINEAR_RADIUS_DECELERATION = 15f;
 
-    float TIME_TARGET_VELOCITY = 0.15f;
+    float TIME_TARGET_VELOCITY = 0.05f;
 
     //Satisfaction and deceleration values for Align (in radians)
     float ANGULAR_RADIUS_SATISFACTION = PI / 64;

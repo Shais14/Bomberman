@@ -311,6 +311,25 @@ public class BombermanMap {
         return PosNum.toTile(s, this);
     }
 
+    public float getGERatio(Tile currTile, Tile nextTile) {
+        float effort = 0;
+        switch (nextTile.ty) {
+            case BRICK:
+                effort = 5;
+                break;
+            case EMPTY:
+                effort = 1;
+                break;
+            case OBSTACLE:
+                effort = Float.MAX_VALUE;
+                break;
+        }
+
+        float signalGain = nextTile.signal - currTile.signal;
+
+        return signalGain/effort;
+    }
+
     public void draw() {
         int i, j;
         data.Tile tile;

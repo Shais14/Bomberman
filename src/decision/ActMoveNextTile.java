@@ -25,8 +25,14 @@ public class ActMoveNextTile extends Action {
         PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.PLAYER_KEY);
         Tile nextTile = (Tile) paramMap.get(Const.DecisionTreeParams.NEXT_TILE_KEY);
 
-        return (player.kinematicInfo.getPosition().x - nextTile.posCord.x <= Const.LINEAR_EPSILON) &&
-                (player.kinematicInfo.getPosition().y - nextTile.posCord.y <= Const.LINEAR_EPSILON);
+        if ((Math.abs(player.kinematicInfo.getPosition().x - nextTile.posCord.x) <= Const.LINEAR_EPSILON) &&
+                (Math.abs(player.kinematicInfo.getPosition().y - nextTile.posCord.y) <= Const.LINEAR_EPSILON)) {
+            player.kinematicInfo.getVelocity().mult(0);
+            player.sArrive.setTarget(player.kinematicInfo);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public String toString() {

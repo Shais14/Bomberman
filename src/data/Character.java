@@ -19,9 +19,9 @@ import java.util.HashMap;
  */
 public abstract class Character {
     public KinematicInfo kinematicInfo;
-    Arrive sArrive;
-    Align sAlign;
-    SteeringInfo steering;
+    public Arrive sArrive;
+    public Align sAlign;
+    public SteeringInfo steering;
     public BombermanMap map;
 
     PShape mainShape, crumbShape;

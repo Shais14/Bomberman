@@ -1,6 +1,7 @@
 
 import data.*;
 import data.Character;
+import debug.DebugUtil;
 import decision.Action;
 import decision.DTreeNode;
 import decision.DecisionTreeGenerator;
@@ -87,19 +88,20 @@ public class Main extends PApplet {
         paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, bombermanMap.getTileAt(player.kinematicInfo.getPosition()));
         paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
 
-        // TODO: Check if this prediction is correct
-        PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
-        paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
 
-//        if (isNextDTreeEvalReqd()) {
-//            paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
-//            Action nextAction = player.evaluateDTree(paramMap);
-//            if (nextAction != null) {
-//                player.isPerformingAction = true;
-//                player.currAction = nextAction;
-//                nextAction.performAction(paramMap);
-//            }
-//        }
+        if (isNextDTreeEvalReqd()) {
+            // TODO: Check if this prediction is correct
+            PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+            paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+            paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
+            Action nextAction = player.evaluateDTree(paramMap);
+            if (nextAction != null) {
+                player.isPerformingAction = true;
+                player.currAction = nextAction;
+                DebugUtil.printDecisionTreeNode(nextAction);
+                nextAction.performAction(paramMap);
+            }
+        }
 
     }
 

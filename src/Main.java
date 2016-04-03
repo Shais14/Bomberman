@@ -70,7 +70,7 @@ public class Main extends PApplet {
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
-//        NodePlus2();
+        NodePlus2();
         text.draw(player);
         enemy.draw();
 
@@ -217,6 +217,7 @@ public class Main extends PApplet {
             current = rc + " " + cc;
             target = r1 + " " + c1;
 
+            Tile targertTile = Tile.toTile(target, bombermanMap);
             processedList.add(current);
 
             if(!processedList.contains(target)){
@@ -306,7 +307,6 @@ public class Main extends PApplet {
         String tar = target.toString();
 
         findEdge(cur, tar);
-
     }
 
     public static void main(String[] args) {

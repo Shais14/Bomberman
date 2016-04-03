@@ -24,6 +24,8 @@ public class BombermanMap {
     public String Treasure;
 
 
+    int variationDistance = 5;
+
     //Colors used
     public int empty;
     public int brick;
@@ -213,7 +215,7 @@ public class BombermanMap {
             case 0: {
                 signalStrengthInner = 50;
 
-                for (int k = 1; k <= 5; k++) {
+                for (int k = 1; k <= variationDistance; k++) {
 
                     int level = k;
                     int lextreme = rk - level;
@@ -277,7 +279,7 @@ public class BombermanMap {
                                 }
                           }
 
-                                if(k>5) {      signalStrengthOuter--;}
+                                if(k>variationDistance) {      signalStrengthOuter--;}
                         }
            }
         }
@@ -354,7 +356,7 @@ public class BombermanMap {
         int rk = Trea.posNum.rowIndex;
         int ck = Trea.posNum.colIndex;
 
-        for (int k = 1; k <= 5; k++) {
+        for (int k = 1; k <= variationDistance; k++) {
 
             int level = k;
             int lextreme = rk - level;

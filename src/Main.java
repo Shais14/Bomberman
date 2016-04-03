@@ -1,7 +1,9 @@
 
 import data.*;
+import data.Character;
 import decision.Action;
 import decision.DTreeNode;
+import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -24,9 +26,13 @@ public class Main extends PApplet {
     //Timing control values
     long bombPlantTime;
 
+    HashMap<Integer, Object> paramMap;
+    ArrayList<Character> allCharacters;
+
     public void initializeCharacters(PVector startingPoint, PVector enemyStartingPoint) {
         player = new PlayerInfo(this);
         player.initialize(startingPoint);
+        player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
 
         enemy = new Enemy(this);
         enemy.initialize(enemyStartingPoint);
@@ -43,6 +49,16 @@ public class Main extends PApplet {
         initializeCharacters(bombermanMap.tiles[1][1].posCord, bombermanMap.tiles[13][13].posCord);
 
         text = new Text(this);
+
+        allCharacters = new ArrayList<Character>();
+        allCharacters.add(player);
+        allCharacters.add(enemy);
+
+        paramMap = new HashMap<Integer, Object>();
+        paramMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
+        paramMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
+        paramMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemy);
+        paramMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
     }
 
 //    public void mousePressed()
@@ -68,15 +84,20 @@ public class Main extends PApplet {
             }
         }
 
-        if (isNextDTreeEvalReqd()) {
-            HashMap<Integer, Object> paramMap = new HashMap<Integer, Object>();
-            paramMap.put(DTreeNode.GRAPH_KEY, bombermanMap);
-            paramMap.put(DTreeNode.PLAYER_KEY, player);
-            paramMap.put(DTreeNode.ENEMY_KEY, enemy);
-            paramMap.put(DTreeNode.CURR_TILE_KEY, bombermanMap.getTileAt(player.kinematicInfo.getPosition()));
+        paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, bombermanMap.getTileAt(player.kinematicInfo.getPosition()));
 
+        // TODO: Check if this prediction is correct
+        PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+        paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+
+        if (isNextDTreeEvalReqd()) {
+            paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
             Action nextAction = player.evaluateDTree(paramMap);
-            nextAction.performAction(paramMap);
+            if (nextAction != null) {
+                player.isPerformingAction = true;
+                player.currAction = nextAction;
+                nextAction.performAction(paramMap);
+            }
         }
 
     }
@@ -105,7 +126,6 @@ public class Main extends PApplet {
             enemy.die();
         }
     }
-
 
     public void detonate() {
         int tileX = bombermanMap.quantizeX(activeBomb.bombPos);
@@ -266,18 +286,15 @@ public class Main extends PApplet {
     }
 
     public boolean findEdge(String current, String target) {
-
-        ArrayList<String> edgeList = new ArrayList();
+        ArrayList<String> edgeList;
         edgeList = bombermanMap.edges.get(current);
 
-
-        boolean flag = edgeList.contains(target);
-
-        return flag;
+        return edgeList.contains(target);
     }
 
     public boolean isNextDTreeEvalReqd() {
-        return false;
+        return player.currAction == null || player.currAction.hasCompleted(paramMap);
+
     }
 
     public void findEdge(Tile current, Tile target) {

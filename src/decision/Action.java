@@ -7,4 +7,5 @@ import java.util.HashMap;
  */
 public abstract class Action extends DTreeNode{
     public abstract void performAction(HashMap<Integer, Object> paramMap);
+    public abstract boolean hasCompleted(HashMap<Integer, Object> paramMap);
 }

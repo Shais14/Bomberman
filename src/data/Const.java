@@ -81,4 +81,16 @@ public interface Const extends PConstants {
     float GRAPH_Y_OFFSET = 70;
     float GRAPH_NODE_WIDTH = 50;
     float GRAPH_LOBBY_WIDTH = 150;
+
+    interface DecisionTreeParams {
+        int GRAPH_KEY = 1;
+        int PLAYER_KEY = 2;
+        int ENEMY_KEY = 3;
+        int ALL_CHARS_KEY = 4;
+        int CURR_CHAR_KEY = 5;
+        int CURR_TILE_KEY = 6;
+        int NEXT_TILE_KEY = 7;
+
+        String DECISION_TREE_FILE_NAME = "C:\\Users\\Anand\\IdeaProjects\\CSC584\\Final Project\\Bomberman\\decisionTree.txt";
+    }
 }

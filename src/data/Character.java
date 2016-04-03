@@ -28,6 +28,8 @@ public abstract class Character {
     PApplet parent;
 
     public DTreeNode decisionTreeHead;
+    public boolean isPerformingAction;
+    public Action currAction;
 
     long lastAIComputeTime, lastCrumbDrawTime;
 
@@ -131,6 +133,22 @@ public abstract class Character {
 
         sArrive.setTarget(target);
         sAlign.setTarget(target);
+
+        PVector direction = PVector.sub(target.getPosition(), kinematicInfo.getPosition());
+        kinematicInfo.setRotation(0);
+        sAlign.getTarget().setOrientation(direction.heading());
+    }
+
+    public void turn(float newAngle) {
+        KinematicInfo target = new KinematicInfo();
+        target.setOrientation(newAngle);
+
+        sAlign.setTarget(target);
+    }
+
+    public void turn(PVector targetPos) {
+        KinematicInfo target = new KinematicInfo();
+        target.setPosition(targetPos.copy());
 
         PVector direction = PVector.sub(target.getPosition(), kinematicInfo.getPosition());
         kinematicInfo.setRotation(0);

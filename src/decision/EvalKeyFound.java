@@ -16,4 +16,8 @@ public class EvalKeyFound extends Evaluation {
         BombermanMap map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
         return map.isTreaureVisible() ? children.get(TRUE_INDEX) : children.get(FALSE_INDEX);
     }
+
+    public String toString() {
+        return "+++ Checking if key found";
+    }
 }

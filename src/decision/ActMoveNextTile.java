@@ -28,4 +28,8 @@ public class ActMoveNextTile extends Action {
         return (player.kinematicInfo.getPosition().x - nextTile.posCord.x <= Const.LINEAR_EPSILON) &&
                 (player.kinematicInfo.getPosition().y - nextTile.posCord.y <= Const.LINEAR_EPSILON);
     }
+
+    public String toString() {
+        return "--- Moving to next tile";
+    }
 }

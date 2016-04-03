@@ -45,4 +45,8 @@ public class ActPickNewDir extends Action {
 
         return (player.kinematicInfo.getOrientation() - dirOrientation) <= Const.LINEAR_EPSILON;
     }
+
+    public String toString() {
+        return "--- New direction to be picked";
+    }
 }

@@ -33,4 +33,8 @@ public class EvalSignalStrVariation extends Evaluation {
 
         return flag ? children.get(TRUE_INDEX) : children.get(FALSE_INDEX);
     }
+
+    public String toString() {
+        return "+++ Checking to see if the signal strength varies among adjacent tiles";
+    }
 }

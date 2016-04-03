@@ -18,4 +18,8 @@ public class ActPathFindAndFollow extends Action {
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         return false;
     }
+
+    public String toString() {
+        return "--- Finding path to target, and proceeding to follow it";
+    }
 }

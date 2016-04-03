@@ -11,6 +11,11 @@ import java.util.HashMap;
 public class EvalNextTileHasMaxGE extends Evaluation {
     @Override
     public DTreeNode evaluate(HashMap<Integer, Object> paramMap) {
-        return null;
+        //TODO: Replace this code with actual stuff
+        return children.get(TRUE_INDEX);
+    }
+
+    public String toString() {
+        return "+++ Checking to see if next tile has the maximum GE ratio, amongst all adjacent tiles";
     }
 }

@@ -17,4 +17,8 @@ public class EvalNextTileObstacle extends Evaluation {
 
         return (nextTile.ty == Tile.type.OBSTACLE) ? children.get(TRUE_INDEX) : children.get(FALSE_INDEX);
     }
+
+    public String toString() {
+        return "+++ Checking to see if next tile is an obstacle";
+    }
 }

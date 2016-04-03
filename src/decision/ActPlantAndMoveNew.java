@@ -20,4 +20,8 @@ public class ActPlantAndMoveNew extends Action {
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         return false;
     }
+
+    public String toString() {
+        return "--- Planting bomb and moving to newly emptied tile";
+    }
 }

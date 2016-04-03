@@ -1,14 +1,11 @@
 package decision;
 
 import algorithms.Astar;
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import data.*;
-import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static sun.audio.AudioPlayer.player;
 
 /**
  * Plants a bomb at the current tile, and moves to an unexplored
@@ -52,7 +49,7 @@ public class ActPlantAndMoveUnexplored extends Action {
         String str;
         ArrayList<Tile> tiles = new ArrayList<Tile>();
 
-        for (int i = 0; i<path.size(); i++)
+        for (int i = 0; i < path.size(); i++)
         {
             str = path.get(i);
             tiles.add(Tile.toTile(str, map));
@@ -97,5 +94,9 @@ public class ActPlantAndMoveUnexplored extends Action {
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         return false;
+    }
+
+    public String toString() {
+        return "--- Planting bomb and moving to an unexplored tile";
     }
 }

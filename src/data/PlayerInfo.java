@@ -25,7 +25,7 @@ public class PlayerInfo extends Character {
         super();
         lives = 3;
         score = 0;
-        moveList = new ArrayList<String>();
+        moveList = new ArrayList<Tile>();
 
     }
 

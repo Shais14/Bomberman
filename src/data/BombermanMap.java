@@ -279,6 +279,13 @@ public class BombermanMap {
 
     }
 
+    public Tile getTileAt(PVector cords) {
+        int tileX = quantizeX(cords);
+        int tileY = quantizeY(cords);
+
+        return tiles[tileY][tileX];
+    }
+
     public PVector getNewTileCords(int tileX, int tileY) {
         if (tileX < 0 || tileY < 0 || tileX > col || tileY > row) {
             return null;

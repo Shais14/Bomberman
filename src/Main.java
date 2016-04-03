@@ -1,9 +1,12 @@
 
 import data.*;
+import decision.Action;
+import decision.DTreeNode;
 import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Main extends PApplet {
@@ -63,6 +66,17 @@ public class Main extends PApplet {
                 detonate();
                 activeBomb = null;
             }
+        }
+
+        if (isNextDTreeEvalReqd()) {
+            HashMap<Integer, Object> paramMap = new HashMap<Integer, Object>();
+            paramMap.put(DTreeNode.GRAPH_KEY, bombermanMap);
+            paramMap.put(DTreeNode.PLAYER_KEY, player);
+            paramMap.put(DTreeNode.ENEMY_KEY, enemy);
+            paramMap.put(DTreeNode.CURR_TILE_KEY, bombermanMap.getTileAt(player.kinematicInfo.getPosition()));
+
+            Action nextAction = player.evaluateDTree(paramMap);
+            nextAction.performAction(paramMap);
         }
 
     }
@@ -158,15 +172,16 @@ public class Main extends PApplet {
 
     public void NodePlus2() {
 
+        Tile currTile = bombermanMap.getTileAt(player.kinematicInfo.getPosition());
         //rc and cc is the character's current row and col index.
 
-        int rc = (int) Math.floor(player.kinematicInfo.getPosition().x / 40);
-        int cc = (int) Math.floor(player.kinematicInfo.getPosition().y / 40);
+        int rc = currTile.posNum.rowIndex;
+        int cc = currTile.posNum.colIndex;
         String current, target;
 
         int r1, c1; // to store the index of the tile at distance 1.
 
-        List processedList = new ArrayList<>();
+        List<String> processedList = new ArrayList<String>();
 
         boolean hasEdge = false;
         do {
@@ -252,13 +267,17 @@ public class Main extends PApplet {
 
     public boolean findEdge(String current, String target) {
 
-        ArrayList<String> edgeList = new ArrayList<>();
+        ArrayList<String> edgeList = new ArrayList();
         edgeList = bombermanMap.edges.get(current);
 
 
         boolean flag = edgeList.contains(target);
 
         return flag;
+    }
+
+    public boolean isNextDTreeEvalReqd() {
+        return false;
     }
 
     public void findEdge(Tile current, Tile target) {
@@ -270,8 +289,7 @@ public class Main extends PApplet {
 
     }
 
-
-        public static void main(String[] args) {
+    public static void main(String[] args) {
         PApplet.main(new String[]{"--present", "Main"});
     }
 }

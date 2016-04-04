@@ -209,7 +209,7 @@ public class BombermanMap {
         int rk = Trea.posNum.rowIndex;
         int ck = Trea.posNum.colIndex;
 
-        int d = 0;
+        int d = 2;
 
         switch(d) {
             case 0: {
@@ -291,7 +291,7 @@ public class BombermanMap {
                     }
                 }
         }
-//        DebugUtil.printSignalStrength(this);
+        DebugUtil.printSignalStrength(this);
 
     }
 
@@ -299,6 +299,9 @@ public class BombermanMap {
         int tileX = quantizeX(cords);
         int tileY = quantizeY(cords);
 
+        if (tileX >= col || tileY >= row) {
+            return null;
+        }
         return tiles[tileY][tileX];
     }
 

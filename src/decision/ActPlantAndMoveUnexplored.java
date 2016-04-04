@@ -35,18 +35,22 @@ public class ActPlantAndMoveUnexplored extends Action {
         currPosY = map.quantizeY(player.kinematicInfo.getPosition());
         curr = currPosY + " " + currPosX;
         currTile = Tile.toTile(curr, map);
-//        paramMap.put(Const.DecisionTreeParams.BOMB_KEY, Bomb.plantBomb(currTile, map.parent));
+        paramMap.put(Const.DecisionTreeParams.BOMB_KEY, Bomb.plantBomb(currTile, map.parent));
 
         brick = findUnexploredBrick(currTile.posNum);
         astar = new Astar(map);
         path = astar.pathAstar(curr, brick, "E");
         pathTiles = astar.getTiles(path);
         currentTargetIndex = 0;
-        pathTiles.remove(pathTiles.size() - 1);
+        if (pathTiles.size() > 0) {
+            pathTiles.remove(pathTiles.size() - 1);
 
-        subAction = new ActMoveNextTile();
-        paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
-        subAction.performAction(paramMap);
+            subAction = new ActMoveNextTile();
+            paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
+            subAction.performAction(paramMap);
+        } else {
+            subAction = null;
+        }
     }
 
     public String findUnexploredBrick(PosNum pos) {
@@ -84,7 +88,7 @@ public class ActPlantAndMoveUnexplored extends Action {
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
-        if (subAction.hasCompleted(paramMap)) {
+        if (subAction != null && subAction.hasCompleted(paramMap)) {
             if (currentTargetIndex + 1 < pathTiles.size()) {
                 currentTargetIndex++;
                 subAction = new ActMoveNextTile();

@@ -27,7 +27,7 @@ public class ActMoveNextTile extends Action {
 
         if ((Math.abs(player.kinematicInfo.getPosition().x - nextTile.posCord.x) <= Const.LINEAR_EPSILON) &&
                 (Math.abs(player.kinematicInfo.getPosition().y - nextTile.posCord.y) <= Const.LINEAR_EPSILON)) {
-            player.kinematicInfo.getVelocity().mult(0);
+//            player.kinematicInfo.getVelocity().mult(0);
             player.sArrive.setTarget(player.kinematicInfo);
             return true;
         } else {

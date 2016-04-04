@@ -40,14 +40,18 @@ public class ActPathFindAndFollow extends Action {
         path = astar.pathAstar(curr, brick, "E");
         pathTiles = astar.getTiles(path);
 
-        subAction = new ActMoveNextTile();
-        paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
-        subAction.performAction(paramMap);
+        if (pathTiles.size() > 0) {
+            subAction = new ActMoveNextTile();
+            paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
+            subAction.performAction(paramMap);
+        } else {
+            subAction = null;
+        }
     }
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
-        if (subAction.hasCompleted(paramMap)) {
+        if (subAction != null && subAction.hasCompleted(paramMap)) {
             if (currentTargetIndex + 1 < pathTiles.size()) {
                 currentTargetIndex++;
                 subAction = new ActMoveNextTile();

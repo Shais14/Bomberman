@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static data.Tile.type.BRICK;
+
 public class Main extends PApplet {
     //Data Structures
     BombermanMap bombermanMap;
@@ -71,7 +73,6 @@ public class Main extends PApplet {
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
-//        NodePlus2();
         text.draw(player);
         enemy.draw();
 
@@ -201,74 +202,72 @@ public class Main extends PApplet {
         }
     }
 
-    public void NodePlus2() {
+    public void NodePlus2(){
+
 
         Tile currTile = bombermanMap.getTileAt(player.kinematicInfo.getPosition());
-        //rc and cc is the character's current row and col index.
 
+        //rc and cc is the character's current row and col index.
         int rc = currTile.posNum.rowIndex;
         int cc = currTile.posNum.colIndex;
-        String current, target;
+        String current = rc+ " " + cc;
+        List<String> processedList1 = new ArrayList<String>();
+        List<String> processedList2 = new ArrayList<String>();
+        List<String> Targets = new ArrayList<String>();
 
-        int r1, c1; // to store the index of the tile at distance 1.
-
-        List<String> processedList = new ArrayList<String>();
-
-        boolean hasEdge = false;
-        do {
+        while(processedList1.size() != 4 && Targets.size() != 2) {
             int x = (int) random(1, 5);
 
-            int[] nextTile;
-            nextTile = findTile(x, rc, cc);
+            int nextTile[] = findTile(x, rc, cc);
 
-            r1 = nextTile[0];
-            c1 = nextTile[1];
+            int r1 = nextTile[0];
+            int c1 = nextTile[1];
 
-            current = rc + " " + cc;
-            target = r1 + " " + c1;
+            String adjacent = r1 + " " + c1;
 
-            Tile targertTile = Tile.toTile(target, bombermanMap);
-            processedList.add(current);
+            Tile adjacentTile = Tile.toTile(adjacent, bombermanMap);
 
-            if(!processedList.contains(target)){
-                hasEdge = findEdge(current, target);
-                processedList.add(target);
+            if (processedList1.contains(adjacent)) {
+                continue;
             }
-            target = null;
 
-        } while (!hasEdge);
+            if (adjacentTile.ty == Tile.type.OBSTACLE || adjacentTile.ty == Tile.type.BRICK) {
+                processedList1.add(adjacent);
+            }
+            else{
+                processedList2.add(current);
 
-        processedList.clear();
+                while(processedList2.size() != 4 && Targets.size() != 2 ) {
+                    int y = (int) random(1, 5);
 
-        processedList.add(current);
+                    int finalTile[] = findTile(y, r1, c1);
 
-//        System.out.print("Current " + current);
+                    int r2 = finalTile[0];
+                    int c2 = finalTile[1];
 
+                    String target = r2 + " " + c2;
+                    Tile targetTile = Tile.toTile(target, bombermanMap);
 
-        hasEdge = false;
-        do {
-            int y = (int) random(1, 4);
+                    if (processedList2.contains(target)) {
+                        continue;
+                    }
 
-            int[] nextTile;
-            nextTile = findTile(y, r1, c1);
+                    if (targetTile.ty == Tile.type.OBSTACLE || targetTile.ty == Tile.type.BRICK) {
+                        processedList2.add(target);
 
-            int r2 = nextTile[0];
-            int c2 = nextTile[1];
-
-            current = r1 + " " + c1;
-            target = r2 + " " + c2;
-
-            processedList.add(current);
-
-
-            if(!processedList.contains(target)){
-                hasEdge = findEdge(current, target);
-                processedList.add(target);
+                    } else {
+                        Targets.add(adjacent);
+                        Targets.add(target);
+                    }
+                }
+                    if(processedList2.size() == 4)
+                        processedList1.add(current);
 
             }
-        } while (!hasEdge);
+        }
 
-        processedList.clear();
+        if(processedList1.size() == 4)
+            System.out.println("die");
 
 //        System.out.println(" Target " +target);
 

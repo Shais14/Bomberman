@@ -22,29 +22,25 @@ public class ActPlantAndMoveUnexplored extends Action {
 
     @Override
     public void performAction(HashMap<Integer, Object> paramMap) {
-        int currPosX, currPosY;
-        String curr, brick;
+        String currTileString, brickString;
         Tile currTile;
         ArrayList<String> path;
-
         Astar astar;
+
 
         map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
         player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
-        currPosX = map.quantizeX(player.kinematicInfo.getPosition());
-        currPosY = map.quantizeY(player.kinematicInfo.getPosition());
-        curr = currPosY + " " + currPosX;
-        currTile = Tile.toTile(curr, map);
+        currTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
         paramMap.put(Const.DecisionTreeParams.BOMB_KEY, Bomb.plantBomb(currTile, map.parent));
 
-        brick = findUnexploredBrick(currTile.posNum);
+        currTileString = currTile.toString();
+        brickString = findUnexploredBrick(currTile.posNum);
         astar = new Astar(map);
-        path = astar.pathAstar(curr, brick, "E");
+        path = astar.pathAstar(currTileString, brickString, "E");
         pathTiles = astar.getTiles(path);
         currentTargetIndex = 0;
         if (pathTiles.size() > 0) {
-            pathTiles.remove(pathTiles.size() - 1);
-
+//            pathTiles.remove(pathTiles.size() - 1);
             subAction = new ActMoveNextTile();
             paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
             subAction.performAction(paramMap);
@@ -54,24 +50,37 @@ public class ActPlantAndMoveUnexplored extends Action {
     }
 
     public String findUnexploredBrick(PosNum pos) {
-        int i, j = 0, currPosX =  pos.colIndex, currPosY = pos.rowIndex,  level= 1;
+        int i, j = 0, currRow =  pos.rowIndex, currCol = pos.colIndex,  level= 1;
         String str;
         boolean flag = true;
-        int minDist = 2;
-
-        Tile tile;
-
+        int brickRow = 0, brickCol = 0,minDist = 2;
+        ArrayList<String> edgeList;
+        Tile tile, tile1;
 
         do {
 
-            for (i = currPosX - level; flag && i <= currPosX + level; i++) {
-                if (i < 0 || i >= map.row)
+            for (i = currRow - level; flag && i <= currRow + level; i++) {
+                if (i <= 0 || i >= map.row - 1)
                     continue;
-                for (j = currPosY - level; j <= currPosY + level; j++) {
-                    if (j > 0 && j < map.col && map.tiles[i][j].ty == Tile.type.BRICK
-                            && Math.abs(i - currPosY) + Math.abs(j - currPosY)>=minDist) {
-                        flag = false;
-                        break;
+                for (j = currCol - level; flag && j <= currCol + level; j++) {
+                    if (j > 0 && j < map.col-1 && map.tiles[i][j].ty == Tile.type.BRICK
+                            && Math.abs(i - currRow) + Math.abs(j - currCol)>=minDist) {
+                        tile = map.tiles[i][j];
+                        edgeList = map.edges.get(tile.toString());
+                        for (int k = 0; k<edgeList.size(); k = k+2)
+                        {
+                            str = edgeList.get(k);
+                            tile1 = Tile.toTile(str, map);
+                            if(tile1.ty == Tile.type.EMPTY)
+                            {
+                                brickRow = tile1.posNum.rowIndex;
+                                brickCol = tile1.posNum.colIndex;
+                                flag = false;
+                                break;
+
+                            }
+
+                        }
                     }
                 }
 
@@ -80,7 +89,7 @@ public class ActPlantAndMoveUnexplored extends Action {
 
         } while (flag);
 
-        str = i + " " + j;
+        str = brickRow + " " + brickCol;
         return str;
 
     }

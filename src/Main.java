@@ -71,9 +71,16 @@ public class Main extends PApplet {
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
-        NodePlus2();
+//        NodePlus2();
         text.draw(player);
         enemy.draw();
+
+        if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) != null) {
+            if (activeBomb == null) {
+                activeBomb = (Bomb) paramMap.get(Const.DecisionTreeParams.BOMB_KEY);
+                bombPlantTime = System.currentTimeMillis();
+            }
+        }
 
         if (activeBomb != null) {
             activeBomb.draw();
@@ -85,21 +92,22 @@ public class Main extends PApplet {
             }
         }
 
-        paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, bombermanMap.getTileAt(player.kinematicInfo.getPosition()));
-        paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
+        Tile currTile = bombermanMap.getTileAt(player.kinematicInfo.getPosition());
+        if (currTile != null) {
+            paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currTile);
+            paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
 
-
-        if (isNextDTreeEvalReqd()) {
-            // TODO: Check if this prediction is correct
-            PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
-            paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
-            paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
-            Action nextAction = player.evaluateDTree(paramMap);
-            if (nextAction != null) {
-                player.isPerformingAction = true;
-                player.currAction = nextAction;
-                DebugUtil.printDecisionTreeNode(nextAction);
-                nextAction.performAction(paramMap);
+            if (isNextDTreeEvalReqd()) {
+                PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+                paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+                paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
+                Action nextAction = player.evaluateDTree(paramMap);
+                if (nextAction != null) {
+                    player.isPerformingAction = true;
+                    player.currAction = nextAction;
+                    DebugUtil.printDecisionTreeNode(nextAction);
+                    nextAction.performAction(paramMap);
+                }
             }
         }
 

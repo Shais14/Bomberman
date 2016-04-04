@@ -6,6 +6,7 @@ import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -209,7 +210,7 @@ public class BombermanMap {
         int rk = Trea.posNum.rowIndex;
         int ck = Trea.posNum.colIndex;
 
-        int d = 2;
+        int d = 0;
 
         switch(d) {
             case 0: {
@@ -411,6 +412,102 @@ public class BombermanMap {
                 }
             }
         }
+    }
+
+    public ArrayList<Tile> getPathToCover(PVector characterPos){
+        Tile currTile = getTileAt(characterPos);
+
+        //rc and cc is the character's current row and col index.
+        int rc = currTile.posNum.rowIndex;
+        int cc = currTile.posNum.colIndex;
+        String current = rc+ " " + cc;
+        ArrayList<String> processedList1 = new ArrayList<String>();
+        ArrayList<String> processedList2 = new ArrayList<String>();
+        ArrayList<Tile> Targets = new ArrayList<Tile>();
+
+        while(processedList1.size() != 4 && Targets.size() != 2) {
+            int x = (int) parent.random(1, 5);
+
+            int nextTile[] = findTile(x, rc, cc);
+
+            int r1 = nextTile[0];
+            int c1 = nextTile[1];
+
+            String adjacent = r1 + " " + c1;
+
+            Tile adjacentTile = toTile(adjacent);
+
+            if (processedList1.contains(adjacent)) {
+                continue;
+            }
+
+            if (adjacentTile.ty == Tile.type.OBSTACLE || adjacentTile.ty == Tile.type.BRICK) {
+                processedList1.add(adjacent);
+            }
+            else{
+                processedList2.add(current);
+
+                while(processedList2.size() != 4 && Targets.size() != 2 ) {
+                    int y = (int) parent.random(1, 5);
+
+                    int finalTile[] = findTile(y, r1, c1);
+
+                    int r2 = finalTile[0];
+                    int c2 = finalTile[1];
+
+                    String target = r2 + " " + c2;
+                    Tile targetTile = toTile(target);
+
+                    if (processedList2.contains(target)) {
+                        continue;
+                    }
+
+                    if (targetTile.ty == Tile.type.OBSTACLE || targetTile.ty == Tile.type.BRICK) {
+                        processedList2.add(target);
+
+                    } else {
+                        Targets.add(adjacentTile);
+                        Targets.add(targetTile);
+                        return Targets;
+                    }
+                }
+                if(processedList2.size() == 4)
+                    processedList1.add(current);
+
+            }
+        }
+
+        if(processedList1.size() == 4) {
+            System.out.println("die");
+        }
+        return null;
+//        System.out.println(" Target " +target);
+
+    }
+
+    public int[] findTile(int x, int r, int c) {
+
+        int nextTile[] = new int[2];
+        switch (x) {
+            case 1:
+                nextTile[0] = r - 1;
+                nextTile[1] = c;
+                break;
+            case 2:
+                nextTile[0] = r;
+                nextTile[1] = c + 1;
+                break;
+            case 3:
+                nextTile[0] = r + 1;
+                nextTile[1] = c;
+                break;
+            case 4:
+                nextTile[0] = r;
+                nextTile[1] = c - 1;
+                break;
+
+        }
+        return nextTile;
     }
 }
 

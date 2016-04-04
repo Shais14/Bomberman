@@ -2,6 +2,7 @@ package decision;
 
 import algorithms.Astar;
 import data.*;
+import debug.DebugUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class ActPlantAndMoveUnexplored extends Action {
         currTileString = currTile.toString();
         brickString = findUnexploredBrick(currTile.posNum);
         astar = new Astar(map);
+        DebugUtil.printDebugString("Attempting to find path from " + currTileString + " (current tile) -> " + brickString + " (unexplored tile)");
         path = astar.pathAstar(currTileString, brickString, "E");
         pathTiles = astar.getTiles(path);
         currentTargetIndex = 0;
@@ -106,13 +108,19 @@ public class ActPlantAndMoveUnexplored extends Action {
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         if (subAction != null && subAction.hasCompleted(paramMap)) {
             if (currentTargetIndex + 1 < pathTiles.size()) {
+                // Unexplored tile not yet reached -> bomb may or may not have detonated (but we don't care about it yet)
                 currentTargetIndex++;
                 subAction = new ActMoveNextTile();
                 paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
                 subAction.performAction(paramMap);
                 return false;
             } else {
-                return true;
+                // Unexplored tile reached -> check if bomb detonated
+                if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) == null) {
+                    // Bomb detonated (and unexplored tile reached) -> action complete
+                    return true;
+                }
+                return false;
             }
         }
         return false;

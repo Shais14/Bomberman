@@ -64,11 +64,6 @@ public class Main extends PApplet {
         paramMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
     }
 
-//    public void mousePressed()
-//    {
-//        ArrayList<String> path = Astar.pathAstar("1 1", "3 3", "E", bombermanMap);
-//    }
-
     public void draw() {
         bombermanMap.draw();
         bombermanMap.drawSignal();
@@ -200,102 +195,6 @@ public class Main extends PApplet {
                 default:
             }
         }
-    }
-
-    public void NodePlus2(){
-
-
-        Tile currTile = bombermanMap.getTileAt(player.kinematicInfo.getPosition());
-
-        //rc and cc is the character's current row and col index.
-        int rc = currTile.posNum.rowIndex;
-        int cc = currTile.posNum.colIndex;
-        String current = rc+ " " + cc;
-        List<String> processedList1 = new ArrayList<String>();
-        List<String> processedList2 = new ArrayList<String>();
-        List<String> Targets = new ArrayList<String>();
-
-        while(processedList1.size() != 4 && Targets.size() != 2) {
-            int x = (int) random(1, 5);
-
-            int nextTile[] = findTile(x, rc, cc);
-
-            int r1 = nextTile[0];
-            int c1 = nextTile[1];
-
-            String adjacent = r1 + " " + c1;
-
-            Tile adjacentTile = Tile.toTile(adjacent, bombermanMap);
-
-            if (processedList1.contains(adjacent)) {
-                continue;
-            }
-
-            if (adjacentTile.ty == Tile.type.OBSTACLE || adjacentTile.ty == Tile.type.BRICK) {
-                processedList1.add(adjacent);
-            }
-            else{
-                processedList2.add(current);
-
-                while(processedList2.size() != 4 && Targets.size() != 2 ) {
-                    int y = (int) random(1, 5);
-
-                    int finalTile[] = findTile(y, r1, c1);
-
-                    int r2 = finalTile[0];
-                    int c2 = finalTile[1];
-
-                    String target = r2 + " " + c2;
-                    Tile targetTile = Tile.toTile(target, bombermanMap);
-
-                    if (processedList2.contains(target)) {
-                        continue;
-                    }
-
-                    if (targetTile.ty == Tile.type.OBSTACLE || targetTile.ty == Tile.type.BRICK) {
-                        processedList2.add(target);
-
-                    } else {
-                        Targets.add(adjacent);
-                        Targets.add(target);
-                    }
-                }
-                    if(processedList2.size() == 4)
-                        processedList1.add(current);
-
-            }
-        }
-
-        if(processedList1.size() == 4)
-            System.out.println("die");
-
-//        System.out.println(" Target " +target);
-
-    }
-
-    public int[] findTile(int x, int r, int c) {
-
-        int nextTile[] = new int[2];
-        switch (x) {
-            case 1:
-                nextTile[0] = r - 1;
-                nextTile[1] = c;
-                break;
-            case 2:
-                nextTile[0] = r;
-                nextTile[1] = c + 1;
-                break;
-            case 3:
-                nextTile[0] = r + 1;
-                nextTile[1] = c;
-                break;
-            case 4:
-                nextTile[0] = r;
-                nextTile[1] = c - 1;
-                break;
-
-        }
-        return nextTile;
     }
 
     public boolean findEdge(String current, String target) {

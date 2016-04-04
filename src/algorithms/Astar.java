@@ -146,7 +146,7 @@ public class Astar {
 
             for (int i = 0; i < n; i += 2) {
                 temp = list.get(i);
-                if (!visited.contains(temp)) {
+                if (!visited.contains(temp) && Tile.toTile(temp, bombermanMap).ty==Tile.type.EMPTY) {
                     edgecost = Float.parseFloat(list.get(i + 1));
                     values = costHeur.get(temp);
                     oldcostsofar = values[0];

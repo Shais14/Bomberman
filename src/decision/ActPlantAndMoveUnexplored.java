@@ -56,6 +56,10 @@ public class ActPlantAndMoveUnexplored extends Action {
         int brickRow = 0, brickCol = 0,minDist = 2;
         ArrayList<String> edgeList;
         Tile tile, tile1;
+        float x1, y1, x2, y2, min  = Float.MAX_VALUE;
+
+        x1 = map.tiles[currRow][currCol].posCord.x;
+        y1 = map.tiles[currRow][currCol].posCord.y;
 
         do {
 
@@ -73,13 +77,16 @@ public class ActPlantAndMoveUnexplored extends Action {
                             tile1 = Tile.toTile(str, map);
                             if(tile1.ty == Tile.type.EMPTY)
                             {
-                                brickRow = tile1.posNum.rowIndex;
-                                brickCol = tile1.posNum.colIndex;
-                                flag = false;
-                                break;
+                                x2 = tile1.posCord.x;
+                                y2 = tile1.posCord.y;
+                                if (min<Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
+                                {
+                                    brickRow = tile1.posNum.rowIndex;
+                                    brickCol = tile1.posNum.colIndex;
+                                    flag = false;
+                                }
 
                             }
-
                         }
                     }
                 }

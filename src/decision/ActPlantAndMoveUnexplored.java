@@ -33,9 +33,9 @@ public class ActPlantAndMoveUnexplored extends Action {
         player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
         currPosX = map.quantizeX(player.kinematicInfo.getPosition());
         currPosY = map.quantizeY(player.kinematicInfo.getPosition());
-        curr = currPosX + " " + currPosY;
+        curr = currPosY + " " + currPosX;
         currTile = Tile.toTile(curr, map);
-        Bomb.plantBomb(currTile, map.parent);
+//        paramMap.put(Const.DecisionTreeParams.BOMB_KEY, Bomb.plantBomb(currTile, map.parent));
 
         brick = findUnexploredBrick(currTile.posNum);
         astar = new Astar(map);

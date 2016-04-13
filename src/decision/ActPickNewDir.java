@@ -1,6 +1,7 @@
 package decision;
 
 import data.*;
+import data.Character;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class ActPickNewDir extends Action {
     @Override
     public void performAction(HashMap<Integer, Object> paramMap) {
         BombermanMap map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
-        PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
+        Character character = (Character) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
         Tile currTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
         Tile nextTile = (Tile) paramMap.get(Const.DecisionTreeParams.NEXT_TILE_KEY);
 
@@ -32,16 +33,15 @@ public class ActPickNewDir extends Action {
             newNextTile = Tile.toTile(newNextTileStr, map);
         } while (newNextTile.ty == Tile.type.OBSTACLE || newNextTile == nextTile);
 
-        dirOrientation = PVector.angleBetween(newNextTile.posCord, player.kinematicInfo.getPosition());
-        player.turn(newNextTile.posCord);
+        dirOrientation = PVector.angleBetween(newNextTile.posCord, character.kinematicInfo.getPosition());
+        character.turn(newNextTile.posCord);
     }
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
-        PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
+        Character character = (Character) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
 
-        return player.sAlign.checkOrientationReached();
-//        return Math.abs(Helper.mapToRange(player.kinematicInfo.getOrientation() - dirOrientation)) <= Const.ANGULAR_RADIUS_SATISFACTION;
+        return character.sAlign.checkOrientationReached();
     }
 
     public String toString() {

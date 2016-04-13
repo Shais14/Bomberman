@@ -41,12 +41,14 @@ public class ActPlantAndMoveUnexplored extends Action {
         path = astar.pathAstar(currTileString, brickString, "E");
         pathTiles = astar.getTiles(path);
         currentTargetIndex = 0;
-        if (pathTiles.size() > 0) {
+        if (pathTiles.size() > 2) {
 //            pathTiles.remove(pathTiles.size() - 1);
             subAction = new ActMoveNextTile();
             paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
             subAction.performAction(paramMap);
         } else {
+            //TODO: Still try to seek cover, maybe?
+            DebugUtil.printDebugString("$$$ Going to die");
             subAction = null;
         }
     }
@@ -116,17 +118,20 @@ public class ActPlantAndMoveUnexplored extends Action {
                 return false;
             } else {
                 // Unexplored tile reached -> check if bomb detonated
-                if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) == null) {
-                    // Bomb detonated (and unexplored tile reached) -> action complete
-                    return true;
-                }
-                return false;
+                // If bomb detonated (and unexplored tile reached) -> action complete
+                return paramMap.get(Const.DecisionTreeParams.BOMB_KEY) == null;
             }
         }
         return false;
     }
 
     public String toString() {
-        return "--- Planting bomb and moving to an unexplored tile";
+        String actionInfo = "--- Planting bomb and moving to an unexplored tile";
+
+        if (pathTiles!= null && pathTiles.size() > 0) {
+            actionInfo += (" while following the path - " + pathTiles);
+        }
+
+        return actionInfo;
     }
 }

@@ -19,6 +19,7 @@ public class Main extends PApplet {
     BombermanMap bombermanMap;
     PlayerInfo player;
     Text text;
+    //TODO: Convert this into an arraylist, to allow multiple enemies
     Enemy enemy;
 
 
@@ -30,6 +31,7 @@ public class Main extends PApplet {
     long bombPlantTime;
 
     HashMap<Integer, Object> paramMap;
+    HashMap<Integer, Object> enemyParamMap;
     ArrayList<Character> allCharacters;
 
     public void initializeCharacters(PVector startingPoint, PVector enemyStartingPoint) {
@@ -38,7 +40,10 @@ public class Main extends PApplet {
         player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
 
         enemy = new Enemy(this, bombermanMap);
+        //TODO: Randomize enemy starting point
         enemy.initialize(enemyStartingPoint);
+        enemy.kinematicInfo.setOrientation(-PI/2);
+        enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
     }
 
     public void settings() {
@@ -62,6 +67,12 @@ public class Main extends PApplet {
         paramMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
         paramMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemy);
         paramMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
+
+        enemyParamMap = new HashMap<Integer, Object>();
+        enemyParamMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
+        enemyParamMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
+        enemyParamMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemy);
+        enemyParamMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
     }
 
     public void draw() {
@@ -93,7 +104,7 @@ public class Main extends PApplet {
             paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currTile);
             paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
 
-            if (isNextDTreeEvalReqd()) {
+            if (isNextDTreeEvalReqd(player, paramMap)) {
                 PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
                 paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
                 paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
@@ -103,6 +114,24 @@ public class Main extends PApplet {
                     player.currAction = nextAction;
                     DebugUtil.printDecisionTreeNode(nextAction);
                     nextAction.performAction(paramMap);
+                }
+            }
+        }
+
+        Tile currEnemyTile = bombermanMap.getTileAt(enemy.kinematicInfo.getPosition());
+        if (currEnemyTile != null) {
+            enemyParamMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currEnemyTile);
+
+            if (isNextDTreeEvalReqd(enemy, enemyParamMap)) {
+                PVector predictedPosition = PVector.add(enemy.kinematicInfo.getPosition(), PVector.fromAngle(enemy.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+                enemyParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+                enemyParamMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, enemy);
+                Action nextAction = enemy.evaluateDTree(enemyParamMap);
+                if (nextAction != null) {
+                    enemy.isPerformingAction = true;
+                    enemy.currAction = nextAction;
+//                    DebugUtil.printDecisionTreeNode(nextAction);
+                    nextAction.performAction(enemyParamMap);
                 }
             }
         }
@@ -123,6 +152,7 @@ public class Main extends PApplet {
         int playerTileX = bombermanMap.quantizeX(player.kinematicInfo.getPosition());
         int playerTileY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
         if (playerTileX == tile.posNum.colIndex && playerTileY == tile.posNum.rowIndex) {
+            DebugUtil.printDebugString("***** Last action executed by PLAYER - " + player.currAction);
             player.die();
         }
 
@@ -156,7 +186,6 @@ public class Main extends PApplet {
         Tile tile = bombermanMap.toTile(s);
         switch (tile.ty) {
             case BRICK:
-                //TODO: Maybe animate this?
                 tile.ty = Tile.type.EMPTY;
                 break;
             case OBSTACLE:
@@ -204,8 +233,8 @@ public class Main extends PApplet {
         return edgeList.contains(target);
     }
 
-    public boolean isNextDTreeEvalReqd() {
-        return player.currAction == null || player.currAction.hasCompleted(paramMap);
+    public boolean isNextDTreeEvalReqd(Character character, HashMap<Integer, Object> paramMap) {
+        return character.currAction == null || character.currAction.hasCompleted(paramMap);
 
     }
 

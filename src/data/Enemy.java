@@ -17,8 +17,4 @@ public class Enemy extends Character {
     public void die() {
         //TODO: Implement this function (kill the enemy)
     }
-
-    void computeAI() {
-
-    }
 }

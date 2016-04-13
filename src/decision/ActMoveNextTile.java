@@ -1,8 +1,7 @@
 package decision;
 
-import data.Const;
-import data.PlayerInfo;
-import data.Tile;
+import data.*;
+import data.Character;
 
 import java.util.HashMap;
 
@@ -14,21 +13,20 @@ import java.util.HashMap;
 public class ActMoveNextTile extends Action {
     @Override
     public void performAction(HashMap<Integer, Object> paramMap) {
-        PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.PLAYER_KEY);
+        Character character = (Character) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
         Tile nextTile = (Tile) paramMap.get(Const.DecisionTreeParams.NEXT_TILE_KEY);
 
-        player.move(nextTile.posCord);
+        character.move(nextTile.posCord);
     }
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
-        PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.PLAYER_KEY);
+        Character character = (Character) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
         Tile nextTile = (Tile) paramMap.get(Const.DecisionTreeParams.NEXT_TILE_KEY);
 
-        if ((Math.abs(player.kinematicInfo.getPosition().x - nextTile.posCord.x) <= Const.LINEAR_EPSILON) &&
-                (Math.abs(player.kinematicInfo.getPosition().y - nextTile.posCord.y) <= Const.LINEAR_EPSILON)) {
-//            player.kinematicInfo.getVelocity().mult(0);
-            player.sArrive.setTarget(player.kinematicInfo);
+        if ((Math.abs(character.kinematicInfo.getPosition().x - nextTile.posCord.x) <= Const.LINEAR_EPSILON) &&
+                (Math.abs(character.kinematicInfo.getPosition().y - nextTile.posCord.y) <= Const.LINEAR_EPSILON)) {
+            character.sArrive.setTarget(character.kinematicInfo);
             return true;
         } else {
             return false;

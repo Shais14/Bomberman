@@ -87,6 +87,10 @@ public class BombermanMap {
             if (x % 2 == 0 && y % 2 == 0)
                 continue;
 
+//          To avoid the bottom right corner (enemy spawn tile)
+            if (x == (col - 2) && y == (row - 2) || x == (col - 2) && y == (row - 3) || x == (col - 3) && y == (row - 2))
+                continue;
+
             temp = x + " " + y;
 
             if (bricks.contains(temp))
@@ -300,7 +304,7 @@ public class BombermanMap {
         int tileX = quantizeX(cords);
         int tileY = quantizeY(cords);
 
-        if (tileX >= col || tileY >= row) {
+        if (tileX >= col || tileY >= row || tileX < 0 || tileY < 0) {
             return null;
         }
         return tiles[tileY][tileX];

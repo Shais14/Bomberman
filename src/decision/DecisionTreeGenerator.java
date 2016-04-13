@@ -41,7 +41,7 @@ public class DecisionTreeGenerator {
     public static void parseLine(DTreeNode parentNode, String line) {
         String tokens[] = line.split(" ");
 
-        if (tokens[0].trim().isEmpty() || tokens[0].equals("#")) {
+        if (tokens[0].trim().isEmpty() || tokens[0].equals("#") || line.charAt(0) == '#') {
             return;
         }
 
@@ -89,6 +89,8 @@ public class DecisionTreeGenerator {
                 return new ActPlantAndMoveNew();
             case DTreeNode.ACT_PLANT_AND_MOVE_UNEXPLORED:
                 return new ActPlantAndMoveUnexplored();
+            case DTreeNode.ACT_TURN_TOWARD_PLAYER:
+                return new ActTurnTowardPlayer();
 
             case DTreeNode.EVAL_KEY_FOUND:
                 return new EvalKeyFound();
@@ -100,6 +102,8 @@ public class DecisionTreeGenerator {
                 return new EvalNextTileObstacle();
             case DTreeNode.EVAL_SIGNAL_STR_VARY:
                 return new EvalSignalStrVariation();
+            case DTreeNode.EVAL_PLAYER_VISIBLE:
+                return new EvalPlayerVisible();
         }
 
         return null;

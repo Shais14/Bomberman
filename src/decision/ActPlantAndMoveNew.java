@@ -48,6 +48,7 @@ public class ActPlantAndMoveNew extends Action {
 //            pathTiles.remove(pathTiles.size() - 1);
             subAction = new ActMoveNextTile();
             paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
+            currentTask = ActPlantAndMoveNew.SEEK_COVER;
             subAction.performAction(paramMap);
         } else {
             subAction = null;
@@ -71,6 +72,7 @@ public class ActPlantAndMoveNew extends Action {
                         // Bomb detonated, now return to original target tile
                         // Now return to original tile
                         Collections.reverse(pathTiles);
+                        pathTiles.add(currTile);
                         currentTargetIndex = 0;
                         subAction = new ActMoveNextTile();
                         paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));

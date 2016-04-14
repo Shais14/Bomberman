@@ -20,8 +20,8 @@ public class Main extends PApplet {
     PlayerInfo player;
     Text text;
     //TODO: Convert this into an arraylist, to allow multiple enemies
-    Enemy enemy;
-
+//    Enemy enemy;
+    ArrayList<Enemy> enemies;
 
     int blastRadius = 1;
 
@@ -31,19 +31,41 @@ public class Main extends PApplet {
     long bombPlantTime;
 
     HashMap<Integer, Object> paramMap;
-    HashMap<Integer, Object> enemyParamMap;
-    ArrayList<Character> allCharacters;
+    ArrayList<HashMap<Integer, Object>> enemiesParamMap;
+//    ArrayList<Character> allCharacters;
 
-    public void initializeCharacters(PVector startingPoint, PVector enemyStartingPoint) {
+    public void initializeCharacters() {
+        Enemy enemy;
+        PVector startingPoint;
+        startingPoint = bombermanMap.tiles[1][1].posCord;
         player = new PlayerInfo(this, bombermanMap);
+        player.setFill(color(200, 200, 100));
         player.initialize(startingPoint);
         player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
 
+        enemies = new ArrayList<Enemy>();
+
         enemy = new Enemy(this, bombermanMap);
-        //TODO: Randomize enemy starting point
-        enemy.initialize(enemyStartingPoint);
-        enemy.kinematicInfo.setOrientation(-PI/2);
+        startingPoint = bombermanMap.tiles[1][13].posCord;
+        enemy.initialize(startingPoint);
+        enemy.kinematicInfo.setOrientation(PI);
         enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
+        enemies.add(enemy);
+
+        enemy = new Enemy(this, bombermanMap);
+        startingPoint = bombermanMap.tiles[13][1].posCord;
+        enemy.initialize(startingPoint);
+//        enemy.kinematicInfo.setOrientation(-PI/2);
+        enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
+        enemies.add(enemy);
+
+        enemy = new Enemy(this, bombermanMap);
+        startingPoint = bombermanMap.tiles[13][13].posCord;
+        enemy.initialize(startingPoint);
+        enemy.kinematicInfo.setOrientation(PI);
+        enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
+        enemies.add(enemy);
+
     }
 
     public void settings() {
@@ -51,36 +73,47 @@ public class Main extends PApplet {
     }
 
     public void setup() {
+
+        HashMap<Integer, Object> enemyParamMap;
         background(155);
 
         bombermanMap = BombermanMap.initializeBombermanMap(this);
-        initializeCharacters(bombermanMap.tiles[1][1].posCord, bombermanMap.tiles[13][13].posCord);
+//        initializeCharacters(bombermanMap.tiles[1][1].posCord, bombermanMap.tiles[13][13].posCord);
 
+        initializeCharacters();
         text = new Text(this);
 
-        allCharacters = new ArrayList<Character>();
-        allCharacters.add(player);
-        allCharacters.add(enemy);
+//        allCharacters = new ArrayList<Character>();
+//        allCharacters.add(player);
+//        allCharacters.add(enemy);
 
         paramMap = new HashMap<Integer, Object>();
         paramMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
         paramMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
-        paramMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemy);
-        paramMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
+        paramMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemies);
+//        paramMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
 
-        enemyParamMap = new HashMap<Integer, Object>();
-        enemyParamMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
-        enemyParamMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
-        enemyParamMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemy);
-        enemyParamMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
+        enemiesParamMap = new ArrayList<HashMap<Integer, Object>>();
+        for (int i = 0; i<enemies.size(); i++) {
+            enemyParamMap = new HashMap<Integer, Object>();
+            enemyParamMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
+            enemyParamMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
+            enemyParamMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemies);
+            enemiesParamMap.add(enemyParamMap);
+        }
+//        enemyParamMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
     }
 
     public void draw() {
+        Enemy enemy;
+        HashMap<Integer, Object> enemyParamMap;
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
         text.draw(player);
-        enemy.draw();
+        for (int i = 0; i<enemies.size(); i++) {
+            enemies.get(i).draw();
+        }
 
         if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) != null) {
             if (activeBomb == null) {
@@ -118,24 +151,27 @@ public class Main extends PApplet {
             }
         }
 
-        Tile currEnemyTile = bombermanMap.getTileAt(enemy.kinematicInfo.getPosition());
-        if (currEnemyTile != null) {
-            enemyParamMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currEnemyTile);
+        for (int i = 0; i<enemies.size(); i++) {
+            enemy = enemies.get(i);
+            enemyParamMap = enemiesParamMap.get(i);
+            Tile currEnemyTile = bombermanMap.getTileAt(enemy.kinematicInfo.getPosition());
+            if (currEnemyTile != null) {
+                enemyParamMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currEnemyTile);
 
-            if (isNextDTreeEvalReqd(enemy, enemyParamMap)) {
-                PVector predictedPosition = PVector.add(enemy.kinematicInfo.getPosition(), PVector.fromAngle(enemy.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
-                enemyParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
-                enemyParamMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, enemy);
-                Action nextAction = enemy.evaluateDTree(enemyParamMap);
-                if (nextAction != null) {
-                    enemy.isPerformingAction = true;
-                    enemy.currAction = nextAction;
+                if (isNextDTreeEvalReqd(enemy, enemyParamMap)) {
+                    PVector predictedPosition = PVector.add(enemy.kinematicInfo.getPosition(), PVector.fromAngle(enemy.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+                    enemyParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+                    enemyParamMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, enemy);
+                    Action nextAction = enemy.evaluateDTree(enemyParamMap);
+                    if (nextAction != null) {
+                        enemy.isPerformingAction = true;
+                        enemy.currAction = nextAction;
 //                    DebugUtil.printDecisionTreeNode(nextAction);
-                    nextAction.performAction(enemyParamMap);
+                        nextAction.performAction(enemyParamMap);
+                    }
                 }
             }
         }
-
     }
 
     public void moveToTile(int tileX, int tileY) {
@@ -148,6 +184,7 @@ public class Main extends PApplet {
     }
 
     public void killAll(Tile tile) {
+        Enemy enemy;
         //Kill player
         int playerTileX = bombermanMap.quantizeX(player.kinematicInfo.getPosition());
         int playerTileY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
@@ -157,10 +194,13 @@ public class Main extends PApplet {
         }
 
         //Kill enemy(ies)
-        int enemyTileX = bombermanMap.quantizeX(enemy.kinematicInfo.getPosition());
-        int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
-        if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
-            enemy.die();
+        for (int i = 0; i<enemies.size(); i++) {
+            enemy = enemies.get(i);
+            int enemyTileX = bombermanMap.quantizeX(enemy.kinematicInfo.getPosition());
+            int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
+            if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
+                enemy.die();
+            }
         }
     }
 

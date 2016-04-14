@@ -24,6 +24,7 @@ public abstract class Character {
     public SteeringInfo steering;
     public BombermanMap map;
 
+    public int fill;
     PShape mainShape, crumbShape;
     ArrayList<PVector> breadCrumbs;
     public PApplet parent;
@@ -43,6 +44,10 @@ public abstract class Character {
         this.parent = parent;
     }
 
+    public void setFill(int fill)
+    {
+        this.fill = fill;
+    }
     public void initialize(PVector startingPoint) {
         PVector initialPos;
         if (startingPoint == null) {
@@ -81,10 +86,10 @@ public abstract class Character {
         steering = new SteeringInfo();
 
         PShape circleShape = parent.createShape(PApplet.ELLIPSE, 0, 0, 20, 20);
-        circleShape.setFill(parent.color(0));
+        circleShape.setFill(fill);
 
         PShape orientShape = parent.createShape(PApplet.TRIANGLE, 0, -10, 0, 10, 15, 0);
-        orientShape.setFill(parent.color(0));
+        orientShape.setFill(fill);
 
         mainShape = parent.createShape(PApplet.GROUP);
         mainShape.addChild(circleShape);

@@ -23,10 +23,8 @@ public class ActPlantAndMoveUnexplored extends Action {
 
     @Override
     public void performAction(HashMap<Integer, Object> paramMap) {
-        String currTileString, brickString;
         Tile currTile;
         ArrayList<String> path;
-        Astar astar;
 
 
         map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
@@ -34,15 +32,11 @@ public class ActPlantAndMoveUnexplored extends Action {
         currTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
         paramMap.put(Const.DecisionTreeParams.BOMB_KEY, Bomb.plantBomb(currTile, map.parent));
 
-        currTileString = currTile.toString();
-        brickString = findUnexploredBrick(currTile.posNum);
-        astar = new Astar(map);
-        DebugUtil.printDebugString("Attempting to find path from " + currTileString + " (current tile) -> " + brickString + " (unexplored tile)");
-        path = astar.pathAstar(currTileString, brickString, "E");
-        pathTiles = astar.getTiles(path);
+
+        pathTiles = findUnexploredBrickPath(currTile.posNum);
+
         currentTargetIndex = 0;
         if (pathTiles.size() > 2) {
-//            pathTiles.remove(pathTiles.size() - 1);
             subAction = new ActMoveNextTile();
             paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
             subAction.performAction(paramMap);
@@ -53,58 +47,118 @@ public class ActPlantAndMoveUnexplored extends Action {
         }
     }
 
-    public String findUnexploredBrick(PosNum pos) {
-        int i, j = 0, currRow =  pos.rowIndex, currCol = pos.colIndex,  level= 1;
-        String str;
+    public ArrayList<Tile> findUnexploredBrickPath(PosNum pos) {
+        int i, j, k, currRow, currCol,  level;
+        String nextTileString, currTileString;
+        ArrayList<Tile> emptyTiles;
         boolean flag = true;
-        int brickRow = 0, brickCol = 0,minDist = 2;
-        ArrayList<String> edgeList;
-        Tile tile, tile1;
-        float x1, y1, x2, y2, min  = Float.MAX_VALUE;
+        Astar astar  = new Astar(map);
+        ArrayList<String> path = new ArrayList<String>();
 
-        x1 = map.tiles[currRow][currCol].posCord.x;
-        y1 = map.tiles[currRow][currCol].posCord.y;
+        currRow =  pos.rowIndex;
+        currCol = pos.colIndex;
+        currTileString = map.tiles[currRow][currCol].toString();
+        level= 1;
 
         do {
 
-            for (i = currRow - level; flag && i <= currRow + level; i++) {
-                if (i <= 0 || i >= map.row - 1)
+            for (i = currRow - level; flag && i <= currRow + level; i = i + 2*level)
+            {
+                if (i <= 0 || i >= map.row-1)
                     continue;
-                for (j = currCol - level; flag && j <= currCol + level; j++) {
-                    if (j > 0 && j < map.col-1 && map.tiles[i][j].ty == Tile.type.BRICK
-                            && Math.abs(i - currRow) + Math.abs(j - currCol)>=minDist) {
-                        tile = map.tiles[i][j];
-                        edgeList = map.edges.get(tile.toString());
-                        for (int k = 0; k<edgeList.size(); k = k+2)
-                        {
-                            str = edgeList.get(k);
-                            tile1 = Tile.toTile(str, map);
-                            if(tile1.ty == Tile.type.EMPTY)
-                            {
-                                x2 = tile1.posCord.x;
-                                y2 = tile1.posCord.y;
-                                if (min<Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
-                                {
-                                    brickRow = tile1.posNum.rowIndex;
-                                    brickCol = tile1.posNum.colIndex;
-                                    flag = false;
-                                }
+                for (j = currCol - level; flag && j <= currCol + level; j++)
+                {
+                    if (j <= 0 || i >= map.col-1)
+                        continue;
 
-                            }
-                        }
+                    if (map.tiles[i][j].ty != Tile.type.BRICK || Math.abs(i-currRow) + Math.abs(j - currCol)==1)
+                        continue;
+
+                    emptyTiles = getEmptyTiles(currRow, currCol, i, j);
+
+                    for (k = 0; flag && k < emptyTiles.size(); k++)
+                    {
+                        nextTileString = emptyTiles.get(k).toString();
+                        path = astar.pathAstar(currTileString, nextTileString, "E");
+                        if (path.size() > 2)
+                            flag = false;
                     }
                 }
+            }
 
+            for (i = currRow - level + 1; flag && i < currRow + level; i++)
+            {
+
+                if (i <= 0 || i >= map.row-1)
+                    continue;
+
+                for (j = currCol - level; flag && j <= currCol + level; j = j + 2 * level) {
+                    if (j <= 0 || j >= map.col - 1)
+                        continue;
+
+                    if (map.tiles[i][j].ty != Tile.type.BRICK || Math.abs(i-currRow) + Math.abs(j - currCol)==1)
+                        continue;
+
+                    emptyTiles = getEmptyTiles(currRow, currCol, i, j);
+                    for (k = 0; k < emptyTiles.size(); k++)
+                    {
+                        nextTileString = emptyTiles.get(k).toString();
+                        path = astar.pathAstar(currTileString, nextTileString, "E");
+                        if (path.size() > 2)
+                            flag = false;
+
+                    }
+                }
             }
             level++;
 
         } while (flag);
 
-        str = brickRow + " " + brickCol;
-        return str;
-
+        return astar.getTiles(path);
     }
 
+
+    public ArrayList<Tile> getEmptyTiles(int currRow, int currCol, int i, int j)
+    {
+        String str;
+        int brickRow = 0, brickCol = 0,minDist = 2;
+        ArrayList<String> edgeList;
+        ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
+        Tile brick, currTile, emptyTile;
+//        float x1, y1, x2, y2, min  = Float.MAX_VALUE;
+//        x1 = map.tiles[currRow][currCol].posCord.x;
+//        y1 = map.tiles[currRow][currCol].posCord.y;
+
+        currTile = map.tiles[currRow][currCol];
+        brick = map.tiles[i][j];
+
+        edgeList = map.edges.get(brick.toString());
+        for (int k = 0; k<edgeList.size(); k = k+2)
+        {
+            str = edgeList.get(k);
+            emptyTile = Tile.toTile(str, map);
+            if(emptyTile.ty == Tile.type.EMPTY && currTile!=emptyTile && Math.abs(emptyTile.posNum.rowIndex - currRow) +
+                    Math.abs(emptyTile.posNum.colIndex - currCol)>=minDist)
+            {
+                emptyTiles.add(emptyTile);
+//                x2 = tile1.posCord.x;
+//                y2 = tile1.posCord.y;
+//                if ( min < Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2) );
+//                {
+//                    brickRow = tile1.posNum.rowIndex;
+//                    brickCol = tile1.posNum.colIndex;
+//                }
+
+            }
+        }
+
+        return emptyTiles;
+//        if ( brickRow == 0 && brickCol == 0)
+//            return null;
+//        return map.tiles[brickRow][brickCol].toString();
+
+
+    }
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {

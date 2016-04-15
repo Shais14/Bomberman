@@ -144,7 +144,7 @@ public class Main extends PApplet {
         HashMap<Integer, Object> enemyParamMap;
         bombermanMap.draw();
         bombermanMap.drawSignal();
-
+        player.draw();
         text.draw(player);
         for (Enemy currEnemy : enemies) {
             currEnemy.draw();

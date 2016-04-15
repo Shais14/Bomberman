@@ -55,8 +55,13 @@ public class BombermanMap {
 
     public void addTreasure(ArrayList<String> bricks) {
         Random r = new Random();
-        int TreasurePos = r.nextInt(bricks.size());
-        Treasure = bricks.get(TreasurePos);
+        int TreasurePos;
+        Tile tempTreasureTile;
+        do {
+            TreasurePos = r.nextInt(bricks.size());
+            Treasure = bricks.get(TreasurePos);
+            tempTreasureTile = Tile.toTile(Treasure, this);
+        }while(tempTreasureTile.posNum.rowIndex <= 8 && tempTreasureTile.posNum.colIndex <= 8 );
     }
 
     public boolean isTreaureVisible()

@@ -3,21 +3,15 @@ import data.*;
 import data.Character;
 import debug.DebugUtil;
 import decision.Action;
-import decision.DTreeNode;
 import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.math.MathContext;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReferenceArray;
-
-import static data.Tile.type.BRICK;
+import java.util.ListIterator;
+import java.util.Random;
 
 public class Main extends PApplet {
     //Data Structures
@@ -37,10 +31,17 @@ public class Main extends PApplet {
 
     HashMap<Integer, Object> paramMap;
     ArrayList<HashMap<Integer, Object>> enemiesParamMap;
-//    ArrayList<Character> allCharacters;
 
-    public ArrayList<Tile> getEnemyTiles()
-    {
+    String mapConfigFilePath;
+    boolean useSavedMapConfig = false;
+    boolean startNewIteration = false;
+    int iterationCount = 0;
+
+    final int IGNORE = 0;
+    final int PRESENCE = 1;
+    final int AMPLITUDE = 2;
+
+    public ArrayList<Tile> getEnemyTiles() {
         int currRow, currCol, playerRow, playerCol, enemyRow, enemyCol;
         boolean flag;
         Tile currTile, enemyTile;
@@ -53,17 +54,15 @@ public class Main extends PApplet {
             currRow = r.nextInt(bombermanMap.row);
             currCol = r.nextInt(bombermanMap.col);
             currTile = bombermanMap.tiles[currRow][currCol];
-            if (currTile.ty==Tile.type.EMPTY) {
+            if (currTile.ty == Tile.type.EMPTY) {
                 flag = true;
-                for (int i = 0; i<enemyTiles.size(); i++)
-                {
+                for (int i = 0; i < enemyTiles.size(); i++) {
                     enemyTile = enemyTiles.get(i);
                     enemyRow = enemyTile.posNum.rowIndex;
                     enemyCol = enemyTile.posNum.colIndex;
-                    if ( ( Math.abs(currRow - enemyRow) + Math.abs(currCol - enemyCol) < Const.minCharacterDist ) ||
-                            ( Math.abs(currRow - playerRow) + Math.abs(currCol - playerCol) < Const.minCharacterDist ) )
-                    {
-                        flag  = false;
+                    if ((Math.abs(currRow - enemyRow) + Math.abs(currCol - enemyCol) < Const.minCharacterDist) ||
+                            (Math.abs(currRow - playerRow) + Math.abs(currCol - playerCol) < Const.minCharacterDist)) {
+                        flag = false;
                         break;
                     }
 
@@ -73,13 +72,12 @@ public class Main extends PApplet {
                     enemyTiles.add(currTile);
             }
 
-        } while (enemyTiles.size()<Const.numOfEnemies);
+        } while (enemyTiles.size() < Const.numOfEnemies);
 
         return enemyTiles;
     }
 
-
-    public void initializeCharacters() {
+    public void initializeCharacters(boolean newMapGenerated) {
         ArrayList<Tile> enemyTiles = new ArrayList<Tile>();
         Enemy enemy;
         PVector startingPoint;
@@ -87,62 +85,83 @@ public class Main extends PApplet {
         player = new PlayerInfo(this, bombermanMap);
         player.setFill(color(200, 200, 100));
         player.initialize(startingPoint);
-        player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
+//        if (newMapGenerated) {
+            switch (iterationCount % 3) {
+                case IGNORE:
+                    player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.NO_SIGNAL_DECISION_TREE_FILE_NAME);
+                    break;
+                case PRESENCE:
+                    player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME);
+                    break;
+                case AMPLITUDE:
+                    player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
+                    break;
+            }
+//        }
 
         enemyTiles = getEnemyTiles();
         enemies = new ArrayList<Enemy>();
-        for (int i = 0; i < Const.numOfEnemies; i++)
-        {
+        for (int i = 0; i < Const.numOfEnemies; i++) {
             enemy = new Enemy(this, bombermanMap);
             startingPoint = enemyTiles.get(i).posCord;
             enemy.initialize(startingPoint);
             enemy.kinematicInfo.setOrientation(PI);
             enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
             enemies.add(enemy);
-
         }
-
     }
 
     public void settings() {
         size(600, 600);
     }
 
-    public void setup() {
-
-        HashMap<Integer, Object> enemyParamMap;
-        background(155);
-
-        bombermanMap = BombermanMap.initializeBombermanMap(this);
-//        bombermanMap = BombermanMap.initializeBombermanMap(this, "debug" + File.separator + "1460687948162" + ".txt");
-
-        initializeCharacters();
-        text = new Text(this);
-
-//        allCharacters = new ArrayList<Character>();
-//        allCharacters.add(player);
-//        allCharacters.add(enemy);
+    public void initializeIteration(boolean generateNewMap) {
+//        if (generateNewMap) {
+//            iterationCount++;
+//        }
 
         paramMap = new HashMap<Integer, Object>();
+        enemiesParamMap = new ArrayList<HashMap<Integer, Object>>();
+
+        if (generateNewMap) {
+            bombermanMap = BombermanMap.initializeBombermanMap(this);
+        } else {
+            bombermanMap = BombermanMap.initializeBombermanMap(this, mapConfigFilePath);
+        }
+
+        initializeCharacters(generateNewMap);
+
         paramMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
         paramMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
         paramMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemies);
-//        paramMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
 
-        enemiesParamMap = new ArrayList<HashMap<Integer, Object>>();
-        for (int i = 0; i<enemies.size(); i++) {
+        HashMap<Integer, Object> enemyParamMap;
+        for (int i = 0; i < Const.numOfEnemies; i++) {
             enemyParamMap = new HashMap<Integer, Object>();
             enemyParamMap.put(Const.DecisionTreeParams.GRAPH_KEY, bombermanMap);
             enemyParamMap.put(Const.DecisionTreeParams.PLAYER_KEY, player);
             enemyParamMap.put(Const.DecisionTreeParams.ENEMY_KEY, enemies);
             enemiesParamMap.add(enemyParamMap);
         }
-//        enemyParamMap.put(Const.DecisionTreeParams.ALL_CHARS_KEY, allCharacters);
+
+        activeBomb = null;
+    }
+
+    public void setup() {
+        text = new Text(this);
+        background(155);
+        initializeIteration(true);
     }
 
     public void draw() {
         Enemy enemy;
         HashMap<Integer, Object> enemyParamMap;
+
+        if (startNewIteration) {
+            initializeIteration(!useSavedMapConfig);
+            startNewIteration = false;
+        }
+
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
@@ -187,7 +206,7 @@ public class Main extends PApplet {
             }
         }
 
-        for (int i = 0; i<enemies.size(); i++) {
+        for (int i = 0; i < enemies.size(); i++) {
             enemy = enemies.get(i);
             enemyParamMap = enemiesParamMap.get(i);
             Tile currEnemyTile = bombermanMap.getTileAt(enemy.kinematicInfo.getPosition());
@@ -213,17 +232,14 @@ public class Main extends PApplet {
 //        Collision Detection
         Tile currPlayerTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
 
-        if(currPlayerTile == Tile.toTile(bombermanMap.Treasure , bombermanMap)){
+        if (currPlayerTile == Tile.toTile(bombermanMap.Treasure, bombermanMap)) {
             success();
         }
 
-        for (int i = 0; i< enemies.size(); i++)
-        {
-            enemy = enemies.get(i);
+        for (int i = 0; i < enemies.size(); i++) {
             enemyParamMap = enemiesParamMap.get(i);
             Tile currEnemyTile = (Tile) enemyParamMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
-            if (currEnemyTile==currPlayerTile)
-            {
+            if (currEnemyTile == currPlayerTile) {
                 player.die();
                 reset();
                 break;
@@ -234,8 +250,9 @@ public class Main extends PApplet {
 
     private void success() {
         System.out.println("BORAT SAYS GR8 SUCCESS");
-        PImage img = loadImage("C:\\Users\\Shais Shaikh\\Desktop\\62056534.jpg");
-        image(img, 200, 50);
+//        PImage img = loadImage("C:\\Users\\Shais Shaikh\\Desktop\\62056534.jpg");
+//        image(img, 200, 50);
+        reset();
         noLoop();
     }
 
@@ -262,7 +279,7 @@ public class Main extends PApplet {
         //Kill enemy(ies)
         int k = 0;
         ListIterator<Enemy> list = enemies.listIterator();
-        while(list.hasNext()) {
+        while (list.hasNext()) {
             enemy = list.next();
             int enemyTileX = bombermanMap.quantizeX(enemy.kinematicInfo.getPosition());
             int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
@@ -275,15 +292,20 @@ public class Main extends PApplet {
     }
 
     private void reset() {
-
-        if(player.lives > 0) {
-            PVector startingPoint;
-            startingPoint = bombermanMap.tiles[1][1].posCord;
-            player.initialize(startingPoint);
-        }
-        else if(player.lives == 0){
+        if (iterationCount < 3) {
+            startNewIteration = true;
+            iterationCount++;
+        } else {
             System.exit(0);
         }
+//        if(player.lives > 0) {
+//            PVector startingPoint;
+//            startingPoint = bombermanMap.tiles[1][1].posCord;
+//            player.initialize(startingPoint);
+//        }
+//        else if(player.lives == 0){
+//            System.exit(0);
+//        }
     }
 
     public void detonate() {
@@ -341,6 +363,30 @@ public class Main extends PApplet {
                     if (activeBomb == null) {
                         activeBomb = Bomb.plantBomb(bombermanMap.tiles[currPosY][currPosX], this);
                         bombPlantTime = System.currentTimeMillis();
+                    }
+                    break;
+                case 'p':
+                    if (looping) {
+                        noLoop();
+                    } else {
+                        loop();
+                    }
+                    break;
+                case 's':
+                    mapConfigFilePath = DebugUtil.saveMapConfig(bombermanMap);
+                    startNewIteration = true;
+                    useSavedMapConfig = true;
+                    break;
+                case 'r':
+                    startNewIteration = true;
+                    useSavedMapConfig = false;
+                    break;
+                case 'n':
+                    iterationCount++;
+                    startNewIteration = true;
+                    if (!useSavedMapConfig) {
+                        mapConfigFilePath = DebugUtil.saveMapConfig(bombermanMap);
+                        useSavedMapConfig = true;
                     }
                     break;
                 default:

@@ -23,7 +23,7 @@ public class PlayerInfo extends Character {
 
     public PlayerInfo() {
         super();
-        lives = 3;
+        lives = 1;
         score = 0;
         moveList = new ArrayList<Tile>();
 
@@ -31,7 +31,7 @@ public class PlayerInfo extends Character {
 
     public PlayerInfo(PApplet parent, BombermanMap map) {
         super(parent, map);
-        lives = 3;
+        lives = 1;
         score = 0;
         explored = new boolean[map.row][map.col];
 

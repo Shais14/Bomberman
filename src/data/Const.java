@@ -103,6 +103,8 @@ public interface Const extends PConstants {
         int BOMB_KEY = 8;
 
         String DECISION_TREE_FILE_NAME = "decisionTree.txt";
+        String NO_SIGNAL_DECISION_TREE_FILE_NAME = "NoSignal.txt";
+        String SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME = "SignalWW.txt";
         String ENEMY_DECISION_TREE_FILE_NAME = "enemyDTree.txt";
     }
 

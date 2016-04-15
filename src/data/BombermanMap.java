@@ -90,17 +90,17 @@ public class BombermanMap {
             if (x % 2 == 0 && y % 2 == 0)
                 continue;
 
-//          To avoid the bottom right corner (enemy spawn tile)
-            if (x == (col - 2) && y == (row - 2) || x == (col - 2) && y == (row - 3) || x == (col - 3) && y == (row - 2))
-                continue;
-
-//          To avoid the top right corner (enemy spawn tile)
-            if (x == (col - 2) && y == 1 || x == (col - 3) && y == 1 || x == (col - 2) && y == 2)
-                continue;
-
-//          To avoid the bottom left corner (enemy spawn tile)
-            if (x == 1 && y == (row - 2) || x == 1 && y == (row - 3) || x == 2 && y == (row - 2))
-                continue;
+////          To avoid the bottom right corner (enemy spawn tile)
+//            if (x == (col - 2) && y == (row - 2) || x == (col - 2) && y == (row - 3) || x == (col - 3) && y == (row - 2))
+//                continue;
+//
+////          To avoid the top right corner (enemy spawn tile)
+//            if (x == (col - 2) && y == 1 || x == (col - 3) && y == 1 || x == (col - 2) && y == 2)
+//                continue;
+//
+////          To avoid the bottom left corner (enemy spawn tile)
+//            if (x == 1 && y == (row - 2) || x == 1 && y == (row - 3) || x == 2 && y == (row - 2))
+//                continue;
 
             temp = x + " " + y;
 

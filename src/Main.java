@@ -12,6 +12,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.math.MathContext;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static data.Tile.type.BRICK;
 
@@ -35,7 +38,48 @@ public class Main extends PApplet {
     ArrayList<HashMap<Integer, Object>> enemiesParamMap;
 //    ArrayList<Character> allCharacters;
 
+    public ArrayList<Tile> getEnemyTiles()
+    {
+        int currRow, currCol, playerRow, playerCol, enemyRow, enemyCol;
+        boolean flag;
+        Tile currTile, enemyTile;
+        ArrayList<Tile> enemyTiles = new ArrayList<Tile>();
+        Random r = new Random();
+
+        playerRow = 1;
+        playerCol = 1;
+        do {
+            currRow = r.nextInt(bombermanMap.row);
+            currCol = r.nextInt(bombermanMap.col);
+            currTile = bombermanMap.tiles[currRow][currCol];
+            if (currTile.ty==Tile.type.EMPTY) {
+                flag = true;
+                for (int i = 0; i<enemyTiles.size(); i++)
+                {
+                    enemyTile = enemyTiles.get(i);
+                    enemyRow = enemyTile.posNum.rowIndex;
+                    enemyCol = enemyTile.posNum.colIndex;
+                    if ( ( Math.abs(currRow - enemyRow) + Math.abs(currCol - enemyCol) < Const.minCharacterDist ) ||
+                            ( Math.abs(currRow - playerRow) + Math.abs(currCol - playerCol) < Const.minCharacterDist ) )
+                    {
+                        flag  = false;
+                        break;
+                    }
+
+                }
+
+                if (flag)
+                    enemyTiles.add(currTile);
+            }
+
+        } while (enemyTiles.size()<Const.numOfEnemies);
+
+        return enemyTiles;
+    }
+
+
     public void initializeCharacters() {
+        ArrayList<Tile> enemyTiles = new ArrayList<Tile>();
         Enemy enemy;
         PVector startingPoint;
         startingPoint = bombermanMap.tiles[1][1].posCord;
@@ -44,28 +88,18 @@ public class Main extends PApplet {
         player.initialize(startingPoint);
         player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
 
+        enemyTiles = getEnemyTiles();
         enemies = new ArrayList<Enemy>();
+        for (int i = 0; i < Const.numOfEnemies; i++)
+        {
+            enemy = new Enemy(this, bombermanMap);
+            startingPoint = enemyTiles.get(i).posCord;
+            enemy.initialize(startingPoint);
+            enemy.kinematicInfo.setOrientation(PI);
+            enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
+            enemies.add(enemy);
 
-        enemy = new Enemy(this, bombermanMap);
-        startingPoint = bombermanMap.tiles[1][13].posCord;
-        enemy.initialize(startingPoint);
-        enemy.kinematicInfo.setOrientation(PI);
-        enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
-        enemies.add(enemy);
-
-        enemy = new Enemy(this, bombermanMap);
-        startingPoint = bombermanMap.tiles[13][1].posCord;
-        enemy.initialize(startingPoint);
-//        enemy.kinematicInfo.setOrientation(-PI/2);
-        enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
-        enemies.add(enemy);
-
-        enemy = new Enemy(this, bombermanMap);
-        startingPoint = bombermanMap.tiles[13][13].posCord;
-        enemy.initialize(startingPoint);
-        enemy.kinematicInfo.setOrientation(PI);
-        enemy.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.ENEMY_DECISION_TREE_FILE_NAME);
-        enemies.add(enemy);
+        }
 
     }
 
@@ -110,7 +144,7 @@ public class Main extends PApplet {
         HashMap<Integer, Object> enemyParamMap;
         bombermanMap.draw();
         bombermanMap.drawSignal();
-        player.draw();
+
         text.draw(player);
         for (Enemy currEnemy : enemies) {
             currEnemy.draw();
@@ -173,6 +207,22 @@ public class Main extends PApplet {
                 }
             }
         }
+
+
+//        Collision Detection
+        Tile currPlayerTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
+        for (int i = 0; i< enemies.size(); i++)
+        {
+            enemy = enemies.get(i);
+            enemyParamMap = enemiesParamMap.get(i);
+            Tile currEnemyTile = (Tile) enemyParamMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
+            if (currEnemyTile==currPlayerTile)
+            {
+                player.die();
+                break;
+            }
+        }
+
     }
 
     public void moveToTile(int tileX, int tileY) {
@@ -185,6 +235,7 @@ public class Main extends PApplet {
     }
 
     public void killAll(Tile tile) {
+        Enemy enemy;
         //Kill player
         int playerTileX = bombermanMap.quantizeX(player.kinematicInfo.getPosition());
         int playerTileY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
@@ -194,12 +245,17 @@ public class Main extends PApplet {
         }
 
         //Kill enemy(ies)
-        for (Enemy currEnemy : enemies) {
-            int enemyTileX = bombermanMap.quantizeX(currEnemy.kinematicInfo.getPosition());
-            int enemyTileY = bombermanMap.quantizeY(currEnemy.kinematicInfo.getPosition());
+        int k = 0;
+        ListIterator<Enemy> list = enemies.listIterator();
+        while(list.hasNext()) {
+            enemy = list.next();
+            int enemyTileX = bombermanMap.quantizeX(enemy.kinematicInfo.getPosition());
+            int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
             if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
-                currEnemy.die();
+                list.remove();
+                enemiesParamMap.remove(k);
             }
+            k++;
         }
     }
 

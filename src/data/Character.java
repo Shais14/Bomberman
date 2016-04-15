@@ -48,6 +48,7 @@ public abstract class Character {
     {
         this.fill = fill;
     }
+
     public void initialize(PVector startingPoint) {
         PVector initialPos;
         if (startingPoint == null) {
@@ -94,6 +95,7 @@ public abstract class Character {
         mainShape = parent.createShape(PApplet.GROUP);
         mainShape.addChild(circleShape);
         mainShape.addChild(orientShape);
+        mainShape.setStroke(fill);
 
         crumbShape = parent.createShape(PApplet.ELLIPSE, 0, 0, 2, 2);
         crumbShape.setFill(parent.color(64));

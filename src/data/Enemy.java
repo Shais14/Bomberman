@@ -16,6 +16,5 @@ public class Enemy extends Character {
     @Override
     public void die() {
         //TODO: Implement this function (kill the enemy)
-
     }
 }

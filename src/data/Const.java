@@ -25,6 +25,12 @@ public interface Const extends PConstants {
     // Time after which the next bread crumb should be drawn (in milliseconds)
     int CRUMB_DRAW_TIME = 250;
 
+//  Number of enemies
+    int numOfEnemies = 3;
+
+//    Minimum Character Distance
+    int minCharacterDist = 6;
+
     // Maximum values that should be allowed for a player
     float MAX_SPEED = 100f;
     float MAX_ROTATION = -PI;

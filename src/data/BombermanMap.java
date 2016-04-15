@@ -4,10 +4,7 @@ import debug.DebugUtil;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class represents the map used for a particular level in the game.
@@ -19,7 +16,8 @@ public class BombermanMap {
     public int row, col;
 
     public Tile tiles[][];
-    public ArrayList<String> bricks = new ArrayList<String>();
+    public ArrayList<String> bricks;
+//    public ArrayList<String> originalBricks;
 
     public HashMap<String, ArrayList<String>> edges;
     public String Treasure;
@@ -113,15 +111,35 @@ public class BombermanMap {
 
     public static BombermanMap initializeBombermanMap(PApplet parent) {
         BombermanMap bombermanMap = new BombermanMap(parent);
-        bombermanMap.initialize(parent.width, parent.height);
+        bombermanMap.initialize(parent.width, parent.height, true);
         return bombermanMap;
+    }
+
+    public static BombermanMap initializeBombermanMap(PApplet parent, String mapConfigFilePath) {
+        BombermanMap bombermanMap = new BombermanMap(parent);
+        ArrayList<String> mapConfig = BombermanMapParser.parseMapConfig(mapConfigFilePath);
+
+        bombermanMap.Treasure = mapConfig.get(0);
+        bombermanMap.bricks = new ArrayList<>();
+        for (int i = 1; i < mapConfig.size(); i++) {
+            bombermanMap.bricks.add(mapConfig.get(i));
+        }
+
+        bombermanMap.initialize(parent.width, parent.height, false);
+        return bombermanMap;
+    }
+
+    public void reinitialize() {
+        if (parent != null) {
+            initialize(parent.width, parent.height, false);
+        }
     }
 
     /*
         Note: X denotes the column number;
             Y denotes the row number in the grid.
     */
-    public void initialize(int width, int height) {
+    public void initialize(int width, int height, boolean generateNewMap) {
         int i, j;
         String temp, adjTile;
         ArrayList<String> adjList;
@@ -132,7 +150,15 @@ public class BombermanMap {
         tiles = new Tile[row][col];
         edges = new HashMap<String, ArrayList<String>>();
 
-        bricks = addBricks();
+        if (generateNewMap || bricks == null || bricks.size() == 0) {
+            bricks = addBricks();
+        }
+
+//        bricks = new ArrayList<String>(originalBricks.size());
+//        for (String currBrick: originalBricks) {
+//            bricks.add(currBrick);
+//        }
+//        Collections.copy(bricks, originalBricks);
 
         for (i = 0; i < row; i++) {
             for (j = 0; j < col; j++) {
@@ -196,17 +222,16 @@ public class BombermanMap {
             }
         }
 //        DebugUtil.printEdges(this);
-        addTreasure(bricks);
+        if (generateNewMap) {
+            addTreasure(bricks);
+            System.out.println("****************** Map Config stored in - " + DebugUtil.saveMapConfig(this) + " ******************");
+        }
 //        System.out.println(Treasure);
 
 //        for (i = 0; i < bricks.size(); i++) {
 //            System.out.println(bricks.get(i));
 //        }
-
-
         setSignalStrength();
-
-
     }
 
     private void setSignalStrength() {

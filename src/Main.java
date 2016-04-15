@@ -8,6 +8,7 @@ import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,8 +78,8 @@ public class Main extends PApplet {
         HashMap<Integer, Object> enemyParamMap;
         background(155);
 
-        bombermanMap = BombermanMap.initializeBombermanMap(this);
-//        initializeCharacters(bombermanMap.tiles[1][1].posCord, bombermanMap.tiles[13][13].posCord);
+//        bombermanMap = BombermanMap.initializeBombermanMap(this);
+        bombermanMap = BombermanMap.initializeBombermanMap(this, "debug" + File.separator + "1460687948162" + ".txt");
 
         initializeCharacters();
         text = new Text(this);
@@ -111,8 +112,8 @@ public class Main extends PApplet {
         bombermanMap.drawSignal();
         player.draw();
         text.draw(player);
-        for (int i = 0; i<enemies.size(); i++) {
-            enemies.get(i).draw();
+        for (Enemy currEnemy : enemies) {
+            currEnemy.draw();
         }
 
         if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) != null) {
@@ -184,7 +185,6 @@ public class Main extends PApplet {
     }
 
     public void killAll(Tile tile) {
-        Enemy enemy;
         //Kill player
         int playerTileX = bombermanMap.quantizeX(player.kinematicInfo.getPosition());
         int playerTileY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
@@ -194,12 +194,11 @@ public class Main extends PApplet {
         }
 
         //Kill enemy(ies)
-        for (int i = 0; i<enemies.size(); i++) {
-            enemy = enemies.get(i);
-            int enemyTileX = bombermanMap.quantizeX(enemy.kinematicInfo.getPosition());
-            int enemyTileY = bombermanMap.quantizeY(enemy.kinematicInfo.getPosition());
+        for (Enemy currEnemy : enemies) {
+            int enemyTileX = bombermanMap.quantizeX(currEnemy.kinematicInfo.getPosition());
+            int enemyTileY = bombermanMap.quantizeY(currEnemy.kinematicInfo.getPosition());
             if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
-                enemy.die();
+                currEnemy.die();
             }
         }
     }

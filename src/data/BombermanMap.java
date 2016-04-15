@@ -229,7 +229,6 @@ public class BombermanMap {
 //        DebugUtil.printEdges(this);
         if (generateNewMap) {
             addTreasure(bricks);
-            System.out.println("****************** Map Config stored in - " + DebugUtil.saveMapConfig(this) + " ******************");
         }
 //        System.out.println(Treasure);
 

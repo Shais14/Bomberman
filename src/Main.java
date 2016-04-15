@@ -78,8 +78,8 @@ public class Main extends PApplet {
         HashMap<Integer, Object> enemyParamMap;
         background(155);
 
-//        bombermanMap = BombermanMap.initializeBombermanMap(this);
-        bombermanMap = BombermanMap.initializeBombermanMap(this, "debug" + File.separator + "1460687948162" + ".txt");
+        bombermanMap = BombermanMap.initializeBombermanMap(this);
+//        bombermanMap = BombermanMap.initializeBombermanMap(this, "debug" + File.separator + "1460687948162" + ".txt");
 
         initializeCharacters();
         text = new Text(this);

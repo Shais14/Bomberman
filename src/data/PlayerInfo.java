@@ -41,8 +41,6 @@ public class PlayerInfo extends Character {
         //TODO: Pause the game, somehow!
         lives--;
         currAction = null;
-        PVector startingPoint = map.tiles[1][1].posCord;
-        initialize(startingPoint);
         if (lives == 0) {
             //Game Over
             System.exit(0);

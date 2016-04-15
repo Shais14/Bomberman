@@ -29,7 +29,7 @@ public interface Const extends PConstants {
     int numOfEnemies = 3;
 
 //    Minimum Character Distance
-    int minCharacterDist = 6;
+    int minCharacterDist = 8;
 
     // Maximum values that should be allowed for a player
     float MAX_SPEED = 100f;

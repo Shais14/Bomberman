@@ -6,6 +6,7 @@ import decision.Action;
 import decision.DTreeNode;
 import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 import java.io.File;
@@ -211,6 +212,11 @@ public class Main extends PApplet {
 
 //        Collision Detection
         Tile currPlayerTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
+
+        if(currPlayerTile == Tile.toTile(bombermanMap.Treasure , bombermanMap)){
+            success();
+        }
+
         for (int i = 0; i< enemies.size(); i++)
         {
             enemy = enemies.get(i);
@@ -224,6 +230,13 @@ public class Main extends PApplet {
             }
         }
 
+    }
+
+    private void success() {
+        System.out.println("BORAT SAYS GR8 SUCCESS");
+        PImage img = loadImage("C:\\Users\\Shais Shaikh\\Desktop\\62056534.jpg");
+        image(img, 200, 50);
+        noLoop();
     }
 
     public void moveToTile(int tileX, int tileY) {

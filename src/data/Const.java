@@ -52,6 +52,10 @@ public interface Const extends PConstants {
 
     float BOMB_DETONATION_TIME = 2000;
 
+    int TREASURE_DISTANCE = 8;
+
+
+
 //    float WANDER_OFFSET = 100;
 //    float WANDER_RADIUS = 50;
 //    float WANDER_RATE = 4 * PI;

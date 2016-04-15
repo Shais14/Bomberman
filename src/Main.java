@@ -219,6 +219,7 @@ public class Main extends PApplet {
             if (currEnemyTile==currPlayerTile)
             {
                 player.die();
+                reset();
                 break;
             }
         }
@@ -242,6 +243,7 @@ public class Main extends PApplet {
         if (playerTileX == tile.posNum.colIndex && playerTileY == tile.posNum.rowIndex) {
             DebugUtil.printDebugString("***** Last action executed by PLAYER - " + player.currAction);
             player.die();
+            reset();
         }
 
         //Kill enemy(ies)
@@ -256,6 +258,18 @@ public class Main extends PApplet {
                 enemiesParamMap.remove(k);
             }
             k++;
+        }
+    }
+
+    private void reset() {
+
+        if(player.lives > 0) {
+            PVector startingPoint;
+            startingPoint = bombermanMap.tiles[1][1].posCord;
+            player.initialize(startingPoint);
+        }
+        else if(player.lives == 0){
+            System.exit(0);
         }
     }
 

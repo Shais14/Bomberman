@@ -41,11 +41,7 @@ public class PlayerInfo extends Character {
         //TODO: Pause the game, somehow!
         lives--;
         currAction = null;
-        if (lives == 0) {
-            //Game Over
-            System.exit(0);
         }
-    }
 
     public void incrementScore(int amount) {
         score += amount;

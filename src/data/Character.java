@@ -200,4 +200,24 @@ public abstract class Character {
         DTreeNode nextNode = ((Evaluation)node).evaluate(paramMap);
         return evaluateNode(nextNode, paramMap);
     }
+
+    public boolean canSeeTargetInDir(Character target, PVector dir) {
+        Tile nextTile = map.getTileAt(kinematicInfo.getPosition());
+        Tile playerTile = map.getTileAt(target.kinematicInfo.getPosition());
+
+        while (nextTile != null) {
+            if (nextTile.ty != Tile.type.EMPTY) {
+                return false;
+            }
+            if (nextTile == playerTile) {
+                return true;
+            }
+
+            PVector nextTileCord = PVector.add(nextTile.posCord, dir);
+            nextTile = map.getTileAt(nextTileCord);
+        }
+
+        // Will never reach here
+        return false;
+    }
 }

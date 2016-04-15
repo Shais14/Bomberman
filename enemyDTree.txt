@@ -14,7 +14,8 @@
 # 	 EVAL_KEY_FOUND = 4							(Has the key been found?)
 # 	 EVAL_NEXT_TILE_HAS_MAX_GE = 5				(Does the next tile have the maximum gain-to-effort ratio, amongst all adjacent tiles?)
 # 	 EVAL_PLAYER_VISIBLE = 6					(Can the player be seen from the current tile?)
-#    EVAL_NEXT_TILE_HAS_SIGNAL_DECREASE =  7    (Does the next tile have a decrease in signal, can also be thought of as an absence of signal)
+#    EVAL_NEXT_TILE_HAS_SIGNAL_DECREASE =  7    (Does the next tile have a decrease in signal, can also be thought of as an absence of signal?)
+#	 EVAL_PLAYER_VISIBLE_IF_TURNED = 8			(Would the player be visible if the character turned?)
 # 	
 # 	 ACT_PATH_FIND_AND_FOLLOW = 101				(Find path to target and follow that path)
 # 	 ACT_MOVE_NEXT_TILE = 102					(Move to the next tile)
@@ -27,11 +28,15 @@
 6 2
 
 # First child of 6
+8 2
+# First child of 8
 3 2
 # First child of 3
 103
 # Second child of 3
 102
+# Second child of 8
+106
 
 # Second child of 6
-106
+102

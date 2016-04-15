@@ -48,6 +48,11 @@ public class Tile {
         return new PVector(x, y);
     }
 
+    public int getSignal()
+    {
+        return signal;
+    }
+
     public String toString() {
         return posNum.toString();
     }

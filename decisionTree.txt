@@ -13,12 +13,15 @@
 # 	 EVAL_NEXT_TILE_EMPTY = 3					(Is next tile empty?)
 # 	 EVAL_KEY_FOUND = 4							(Has the key been found?)
 # 	 EVAL_NEXT_TILE_HAS_MAX_GE = 5				(Does the next tile have the maximum gain-to-effort ratio, amongst all adjacent tiles?)
-# 	
+# 	 EVAL_PLAYER_VISIBLE = 6					(Can the player be seen from the current tile?)
+#    EVAL_NEXT_TILE_HAS_SIGNAL_DECREASE =  7    (Does the next tile have a decrease in signal, can also be thought of as an absence of signal)
+#
 # 	 ACT_PATH_FIND_AND_FOLLOW = 101				(Find path to target and follow that path)
 # 	 ACT_MOVE_NEXT_TILE = 102					(Move to the next tile)
 # 	 ACT_PICK_NEW_DIR = 103						(Pick a new direction, and rotate to it)
 # 	 ACT_PLANT_AND_MOVE_UNEXPLORED = 104		(Plant bomb and move to an unexplored tile outside of the bomb's blast radius)
 # 	 ACT_PLANT_AND_MOVE_NEW = 105				(Plant bomb, move out of bomb's blast radius, wait till bomb's detonation and move to newly empty tile)
+# 	 ACT_TURN_TOWARD_PLAYER = 106				(Turn toward the player)
 #
 
 1 2

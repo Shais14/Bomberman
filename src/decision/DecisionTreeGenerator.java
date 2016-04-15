@@ -104,6 +104,8 @@ public class DecisionTreeGenerator {
                 return new EvalSignalStrVariation();
             case DTreeNode.EVAL_PLAYER_VISIBLE:
                 return new EvalPlayerVisible();
+            case DTreeNode.EVAL_NEXT_TILE_HAS_SIGNAL_DECREASE:
+                return new EvalNextTileHasSignalDecrease();
         }
 
         return null;

@@ -13,6 +13,7 @@ public class DTreeNode {
     public static final int EVAL_KEY_FOUND = 4;
     public static final int EVAL_NEXT_TILE_HAS_MAX_GE = 5;
     public static final int EVAL_PLAYER_VISIBLE = 6;
+    public static final int EVAL_NEXT_TILE_HAS_SIGNAL_DECREASE = 7;
 
     public static final int ACT_PATH_FIND_AND_FOLLOW = 101;
     public static final int ACT_MOVE_NEXT_TILE = 102;

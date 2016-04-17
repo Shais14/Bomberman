@@ -25,18 +25,18 @@
 # 	 ACT_TURN_TOWARD_PLAYER = 106				(Turn toward the player)
 #
 
-6 2
+#6 2
 
-# First child of 6
-8 2
+## First child of 6
+#8 2
 # First child of 8
 3 2
 # First child of 3
 103
 # Second child of 3
 102
-# Second child of 8
-106
+## Second child of 8
+#106
 
-# Second child of 6
-102
+## Second child of 6
+#102

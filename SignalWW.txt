@@ -24,8 +24,26 @@
 # 	 ACT_TURN_TOWARD_PLAYER = 106				(Turn toward the player)
 #
 
-#Wander Decisions
+4 2
+#First Child of 4 - 7
+7 2
+#First Child of 7 - 3
 3 2
+#First Child of 3 - 2
+2 2
+#First Child of 2
+105
+#Second Child of 2
+103
+#Second Child of 3
+102
+#Second Child of 7
+103
+#Second Child of 4
+101
+
+
+
 #First Child of 3
 101
 #Second Child of 3 - 4

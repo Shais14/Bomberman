@@ -23,18 +23,19 @@
 # 	 ACT_PLANT_AND_MOVE_NEW = 105				(Plant bomb, move out of bomb's blast radius, wait till bomb's detonation and move to newly empty tile)
 # 	 ACT_TURN_TOWARD_PLAYER = 106				(Turn toward the player)
 
-# Wander decisions
+
+4 2
+# First child of 4 - 3
 3 2
-# First child of 3
-101
-# Second child of 3 - 1
-1 2
-# First child of 1
-102
-# Second child of 1 - 2
+# First child of 3 - 2
 2 2
 # First child of 2
-103
-# Second child of 2
 104
+# Second child of 2
+103
+# Second child of 3
+102
+# Second child of 4
+101
+
 

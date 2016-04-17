@@ -89,12 +89,15 @@ public class Main extends PApplet {
             switch (iterationCount % 3) {
                 case IGNORE:
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.NO_SIGNAL_DECISION_TREE_FILE_NAME);
+                    DebugUtil.printDebugString("Iteration count: No signal");
                     break;
                 case PRESENCE:
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME);
+                    DebugUtil.printDebugString("Iteration count: Presence");
                     break;
                 case AMPLITUDE:
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
+                    DebugUtil.printDebugString("Iteration count: Signal seek");
                     break;
             }
 //        }

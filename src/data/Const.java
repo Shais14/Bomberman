@@ -111,7 +111,9 @@ public interface Const extends PConstants {
         String NO_SIGNAL_DECISION_TREE_FILE_NAME = "NoSignal.txt";
         String SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME = "SignalWW.txt";
         String ENEMY_DECISION_TREE_FILE_NAME = "enemyDTree.txt";
+
     }
 
+    String GREAT_SUCCESS_IMAGE_FILE_PATH = "Great Success.jpg";
     int USE_LOGS = 1;
 }

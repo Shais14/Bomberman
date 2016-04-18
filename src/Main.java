@@ -5,8 +5,10 @@ import debug.DebugUtil;
 import decision.Action;
 import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -18,13 +20,16 @@ public class Main extends PApplet {
     PlayerInfo player;
     Text text;
     ArrayList<Enemy> enemies;
-
+    ArrayList<Record> records = new ArrayList<Record>();
+    PImage img;
     int blastRadius = 1;
 
     Bomb activeBomb;
 
     //Timing control values
     long bombPlantTime;
+    long startTime;
+    long endTime;
 
     HashMap<Integer, Object> paramMap;
     ArrayList<HashMap<Integer, Object>> enemiesParamMap;
@@ -81,14 +86,17 @@ public class Main extends PApplet {
 //        if (newMapGenerated) {
             switch (iterationCount % 3) {
                 case Const.IGNORE:
+                    startTime = System.nanoTime();
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.NO_SIGNAL_DECISION_TREE_FILE_NAME);
                     DebugUtil.printDebugString("Iteration count: No signal");
                     break;
                 case Const.PRESENCE:
+                    startTime = System.nanoTime();
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME);
                     DebugUtil.printDebugString("Iteration count: Presence");
                     break;
                 case Const.AMPLITUDE:
+                    startTime = System.nanoTime();
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
                     DebugUtil.printDebugString("Iteration count: Signal seek");
                     break;
@@ -147,6 +155,7 @@ public class Main extends PApplet {
         text = new Text(this);
         background(155);
         initializeIteration(true);
+        img = loadImage(Const.GREAT_SUCCESS_IMAGE_FILE_PATH);
     }
 
     public void draw() {
@@ -245,12 +254,14 @@ public class Main extends PApplet {
 
     }
 
-    private void success() {
+    public void success() {
         System.out.println("BORAT SAYS GR8 SUCCESS");
-//        PImage img = loadImage("C:\\Users\\Shais Shaikh\\Desktop\\62056534.jpg");
-//        image(img, 200, 50);
+        image(img, 150, 50);
+        player.success = true;
+
         reset();
-        noLoop();
+
+//        noLoop();
     }
 
     public void moveToTile(int tileX, int tileY) {
@@ -283,16 +294,30 @@ public class Main extends PApplet {
             if (enemyTileX == tile.posNum.colIndex && enemyTileY == tile.posNum.rowIndex) {
                 list.remove();
                 enemiesParamMap.remove(k);
+                player.incrementScore(100);
             }
             k++;
         }
     }
 
     private void reset() {
-        if (iterationCount < 3) {
+
+        if (iterationCount <=2) {
             startNewIteration = true;
+            Record rc;
+            if(iterationCount % 3 == 0){
+                rc = new Record(iterationCount/3);
+                records.add(rc);
+            } else {
+                rc = records.get(iterationCount/3);
+            }
+            endTime =System.nanoTime();
+            updateRecords(rc);
             iterationCount++;
         } else {
+
+            DebugUtil.printRecords(records.get((iterationCount)/3-1));
+            DebugUtil.saveRecords(records);
             System.exit(0);
         }
 //        if(player.lives > 0) {
@@ -303,6 +328,17 @@ public class Main extends PApplet {
 //        else if(player.lives == 0){
 //            System.exit(0);
 //        }
+    }
+
+    private void updateRecords(Record rc) {
+        rc.incrementScore(iterationCount%3, player.score );
+        rc.isSuccess(iterationCount%3, player.success);
+        rc.numOfBombsPlanted(iterationCount%3, Bomb.numBombs );
+        long totalTime = (endTime - startTime) / 1000000000;
+        rc.timeTaken(iterationCount%3, totalTime);
+        Bomb.numBombs = 0;
+        startTime = 0;
+        endTime = 0;
     }
 
     public void detonate() {

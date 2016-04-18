@@ -2,6 +2,7 @@ package debug;
 
 import data.BombermanMap;
 import data.Const;
+import data.Record;
 import decision.DTreeNode;
 
 import java.io.*;
@@ -27,7 +28,7 @@ public class DebugUtil {
         }
     }
 
-    public static  void printSignalStrength(BombermanMap bombermanMap){
+    public static void printSignalStrength(BombermanMap bombermanMap){
         if (Const.USE_LOGS > 0) {
             System.out.println();
             System.out.println();
@@ -86,4 +87,57 @@ public class DebugUtil {
 
         return newFile.getAbsolutePath();
     }
+
+    public static void printRecords(Record record) {
+        System.out.println("Run Count :" + record.runCount);
+        System.out.println("For Algorithm: No Signal");
+        System.out.println("Score = " + record.score[0]);
+        System.out.println("Success = " + record.success[0]);
+        System.out.println("Bombs Planted = " + record.bombs[0]);
+        System.out.println("Time Taken = " + record.timeInSeconds[0]);
+        System.out.println();
+        System.out.println("Algorithm: Precision");
+        System.out.println("Score = " + record.score[1]);
+        System.out.println("Success = " + record.success[1]);
+        System.out.println("Bombs Planted = " + record.bombs[1]);
+        System.out.println("Time Taken = " + record.timeInSeconds[1]);
+        System.out.println();
+        System.out.println("Algorithm: Amplitude");
+        System.out.println("Score = " + record.score[2]);
+        System.out.println("Success = " + record.success[2]);
+        System.out.println("Bombs Planted = " + record.bombs[2]);
+        System.out.println("Time Taken = " + record.timeInSeconds[2]);
+    }
+
+    public static void saveRecords(ArrayList<Record> records){
+        String newFilePath = "debug" + File.separator + "Records.txt";
+
+        File newFileDir = new File("debug");
+        if (!newFileDir.exists()) {
+            if (!newFileDir.mkdirs()) {
+                System.out.println("Error creating directories required to write the map to file");
+                return;
+            }
+        }
+
+        File newFile = new File(newFilePath);
+        try {
+            if (!newFile.isFile()) {
+                newFile.createNewFile();
+            }
+
+            PrintWriter writer = new PrintWriter(newFile, "UTF-8");
+            writer.println("Algorithm - Score - Success - Bombs Planted - Time Taken(seconds)");
+            for (Record rec: records) {
+                writer.println(rec.toString(0));
+                writer.println(rec.toString(1));
+                writer.println(rec.toString(2));
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

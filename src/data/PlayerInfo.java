@@ -16,15 +16,19 @@ import java.util.ArrayList;
 public class PlayerInfo extends Character {
     public int lives;
     public int score;
+    public boolean success;
     public boolean explored[][];
 //    public Tile current;
 //    public Tile parent;
     public ArrayList<Tile> moveList;
+    public int numOfBombs;
 
     public PlayerInfo() {
         super();
         lives = 1;
         score = 0;
+        success = false;
+        numOfBombs = 0;
         moveList = new ArrayList<Tile>();
 
     }

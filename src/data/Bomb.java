@@ -10,7 +10,7 @@ import processing.core.PVector;
 public class Bomb {
     PShape bombShape;
     PApplet parent;
-
+    public static int numBombs;
     int blastRadius = 1;
 
     public PVector bombPos;
@@ -18,6 +18,7 @@ public class Bomb {
 
     public Bomb(PApplet parent) {
         this.parent = parent;
+        numBombs++;
     }
 
     public static Bomb plantBomb(Tile tile, PApplet parent) {
@@ -25,7 +26,6 @@ public class Bomb {
         bomb.bombPos = tile.posCord.copy();
         bomb.bombermanMap = tile.parent;
         bomb.bombShape = parent.createShape(PApplet.ELLIPSE, 0, 0, 10, 10);
-
         bomb.bombShape.setFill(parent.color(127, 0, 0));
 
         return bomb;

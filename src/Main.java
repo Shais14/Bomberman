@@ -38,6 +38,7 @@ public class Main extends PApplet {
     boolean startNewIteration = false;
     int iterationCount = 0;
     long iterationTimer = 0;
+    long pauseTimer = 0;
 
     public ArrayList<Tile> getEnemyTiles() {
         int currRow, currCol, playerRow, playerCol, enemyRow, enemyCol;
@@ -417,9 +418,12 @@ public class Main extends PApplet {
                     break;
                 case 'p':
                     if (looping) {
+                        pauseTimer = System.currentTimeMillis() - iterationTimer;
                         noLoop();
                     } else {
-                        player.kinematicInfo.lastUpdateTime = System.currentTimeMillis();
+                        long nowTime = System.currentTimeMillis();
+                        player.kinematicInfo.lastUpdateTime = nowTime;
+                        iterationTimer = nowTime - pauseTimer;
                         loop();
                     }
                     break;

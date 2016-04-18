@@ -10,6 +10,7 @@ import java.util.HashMap;
  * Created by Anand on 4/17/2016.
  */
 public class PredictionHelper {
+    public static Enemy enemyToCollideWith = null;
     public static boolean isCollisionPredicted(HashMap<Integer, Object> paramMap) {
         // is enemy at a position 1 from the target tile?
         Tile targetTile = (Tile) paramMap.get(Const.DecisionTreeParams.NEXT_TILE_KEY);
@@ -22,6 +23,7 @@ public class PredictionHelper {
             if (currEnemy != currCharacter) {
                 Tile enemyTile = map.getTileAt(currEnemy.kinematicInfo.getPosition());
                 if (enemyTile == targetTile) {
+                    enemyToCollideWith = currEnemy;
                     return true;
                 }
 
@@ -29,6 +31,7 @@ public class PredictionHelper {
                 Tile predictedTile = map.getTileAt(nextTileCord);
 
                 if (predictedTile == targetTile) {
+                    enemyToCollideWith = currEnemy;
                     return true;
                 }
 
@@ -36,6 +39,7 @@ public class PredictionHelper {
                     String adjTile = adjList.get(i);
                     Tile currTile = map.toTile(adjTile);
                     if (enemyTile == currTile || predictedTile == currTile) {
+                        enemyToCollideWith = currEnemy;
                         return true;
                     }
                 }

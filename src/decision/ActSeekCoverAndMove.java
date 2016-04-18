@@ -1,9 +1,8 @@
 package decision;
 
-import data.BombermanMap;
+import data.*;
 import data.Character;
-import data.Const;
-import data.Tile;
+import debug.DebugUtil;
 import movement.PredictionHelper;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -18,6 +17,7 @@ import java.util.Random;
  */
 public class ActSeekCoverAndMove extends Action {
     Tile currSeekTile;
+    Tile initialTile;
     ArrayList<Tile> pathTiles;
     data.Character currCharacter;
     BombermanMap map;
@@ -31,6 +31,7 @@ public class ActSeekCoverAndMove extends Action {
     static final int RETURNING = 3;
 
     public void seekCover() {
+        initialTile = map.getTileAt(currCharacter.kinematicInfo.getPosition());
         Random r = new Random();
         int newDir = r.nextInt(2) == 0 ? -1 : 1;
 
@@ -53,7 +54,11 @@ public class ActSeekCoverAndMove extends Action {
                 mode = WAITING;
             } else {
                 // Retreat
-                newHeading = currCharacter.kinematicInfo.getOrientation() + PConstants.PI;
+                if (Helper.checkAngleEquality(currCharacter.kinematicInfo.getOrientation(), PredictionHelper.enemyToCollideWith.kinematicInfo.getOrientation())) {
+                    newHeading = currCharacter.kinematicInfo.getOrientation();
+                } else {
+                    newHeading = currCharacter.kinematicInfo.getOrientation() + PConstants.PI;
+                }
                 candidateTileCoords = PVector.add(currCharacter.kinematicInfo.getPosition(), PVector.fromAngle(newHeading).mult(map.tileSize));
                 candidateTile = map.getTileAt(candidateTileCoords);
                 currSeekTile = candidateTile;
@@ -100,8 +105,11 @@ public class ActSeekCoverAndMove extends Action {
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         if (mode == SEEKING_COVER) {
             if (hasReachedTarget(currSeekTile)) {
-                if (PredictionHelper.isCollisionPredicted(paramMap)) {
+                newParamMap = prepareParamMap(paramMap);
+                newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, initialTile);
+                if (PredictionHelper.isCollisionPredicted(newParamMap)) {
                     // Keep seeking cover till a collision-free prediction is made
+                    DebugUtil.printDebugString(" --- Seeking further cover");
                     seekCover();
                 } else {
                     // When collision has been avoided, return to original position
@@ -111,34 +119,36 @@ public class ActSeekCoverAndMove extends Action {
             }
         } else if (mode == WAITING) {
             if (hasReachedTarget(currSeekTile)) {
+                newParamMap = prepareParamMap(paramMap);
+                newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, initialTile);
 //                currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
-                if (!PredictionHelper.isCollisionPredicted(paramMap)) {
+                if (!PredictionHelper.isCollisionPredicted(newParamMap)) {
                     // Do nothing till prediction is for no collision
                     mode = RETURNING;
                     Collections.reverse(pathTiles);
                 }
             }
         } else {
-            if (subAction == null) {
-                if (hasReachedTarget(currSeekTile)) {
-                    int currIndex = pathTiles.indexOf(currSeekTile);
-                    if (pathTiles.size() > currIndex + 1) {
-                        // Some tiles are remaining
-                        currSeekTile = pathTiles.get(currIndex + 1);
-                        // Future scope : recursively call ActMoveToNextTile
-                        newParamMap = prepareParamMap(paramMap);
-                        newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, currSeekTile);
+            int currIndex = pathTiles.indexOf(currSeekTile);
+            if (pathTiles.size() > currIndex + 1) {
+                if ((subAction == null && hasReachedTarget(currSeekTile))) {
+                    currSeekTile = pathTiles.get(currIndex + 1);
+                    newParamMap = prepareParamMap(paramMap);
+                    newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, currSeekTile);
+                    subAction = new ActMoveNextTile();
+                    subAction.performAction(newParamMap);
+                } else if (subAction != null) {
+                    currSeekTile = pathTiles.get(currIndex + 1);
+                    newParamMap = prepareParamMap(paramMap);
+                    newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, currSeekTile);
+                    if (subAction.hasCompleted(newParamMap)) {
                         subAction = new ActMoveNextTile();
                         subAction.performAction(newParamMap);
-//                    currCharacter.move(currSeekTile.posCord);
-                    } else {
-                        // Cover sought, and returned to original tile
-                        currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
-                        return true;
                     }
                 }
             } else {
-                if (subAction.hasCompleted(newParamMap)) {
+                if (subAction == null || subAction.hasCompleted(newParamMap)) {
+                    // Cover sought, and returned to original tile
                     currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
                     return true;
                 }

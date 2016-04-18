@@ -33,9 +33,9 @@ public interface Const extends PConstants {
 
     // Maximum values that should be allowed for a player
     float MAX_SPEED = 100f;
-    float MAX_ROTATION = -PI;
+    float MAX_ROTATION = -250*PI;
     float MAX_LINEAR_ACCELERATION = 12.5f;
-    float MAX_ANGULAR_ACCELERATION = - PI / 1.5f;
+    float MAX_ANGULAR_ACCELERATION = - 10*PI;
 
     // Satisfaction and deceleration values for Arrive
     float LINEAR_RADIUS_SATISFACTION = 0.5f;
@@ -44,10 +44,10 @@ public interface Const extends PConstants {
     float TIME_TARGET_VELOCITY = 0.05f;
 
     //Satisfaction and deceleration values for Align (in radians)
-    float ANGULAR_RADIUS_SATISFACTION = PI / 64;
+    float ANGULAR_RADIUS_SATISFACTION = PI / 128;
     float ANGULAR_RADIUS_DECELERATION = PI / 16;
 
-    float TIME_TARGET_ROTATION = 0.05f;
+    float TIME_TARGET_ROTATION = 0.01f;
 
 
     float BOMB_DETONATION_TIME = 2000;
@@ -92,6 +92,10 @@ public interface Const extends PConstants {
     float GRAPH_NODE_WIDTH = 50;
     float GRAPH_LOBBY_WIDTH = 150;
 
+    int IGNORE = 0;
+    int PRESENCE = 1;
+    int AMPLITUDE = 2;
+
     interface DecisionTreeParams {
         int GRAPH_KEY = 1;
         int PLAYER_KEY = 2;
@@ -101,6 +105,7 @@ public interface Const extends PConstants {
         int CURR_TILE_KEY = 6;
         int NEXT_TILE_KEY = 7;
         int BOMB_KEY = 8;
+        int NEXT_TARGET_STR_KEY = 9;
 
         String DECISION_TREE_FILE_NAME = "decisionTree.txt";
         String NO_SIGNAL_DECISION_TREE_FILE_NAME = "NoSignal.txt";

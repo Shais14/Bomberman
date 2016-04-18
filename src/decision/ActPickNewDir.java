@@ -44,6 +44,15 @@ public class ActPickNewDir extends Action {
         return character.sAlign.checkOrientationReached();
     }
 
+    @Override
+    public String getNextTarget(HashMap<Integer, Object> paramMap) {
+        if (newNextTile == null) {
+            return "";
+        }
+
+        return newNextTile.toString();
+    }
+
     public String toString() {
         return "--- New direction to be picked";
     }

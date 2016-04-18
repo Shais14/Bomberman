@@ -48,7 +48,7 @@ public class ActPlantAndMoveNew extends Action {
 //            pathTiles.remove(pathTiles.size() - 1);
             subAction = new ActMoveNextTile();
             paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, pathTiles.get(currentTargetIndex));
-            currentTask = ActPlantAndMoveNew.SEEK_COVER;
+            currentTask = SEEK_COVER;
             subAction.performAction(paramMap);
         } else {
             subAction = null;
@@ -108,6 +108,19 @@ public class ActPlantAndMoveNew extends Action {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getNextTarget(HashMap<Integer, Object> paramMap) {
+        if (targetTile == null) {
+            return "";
+        }
+
+        if (subAction == null) {
+            return targetTile.toString();
+        }
+
+        return  targetTile.toString() + " [" + subAction.getNextTarget(paramMap) + "]";
     }
 
     public String toString() {

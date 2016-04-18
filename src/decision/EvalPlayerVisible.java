@@ -24,18 +24,18 @@ public class EvalPlayerVisible extends Evaluation {
 
 //        boolean isVisible = false;
 //        int dir = 1;
-//        Tile nextTile = currTile;
+//        Tile nextTile = initialTile;
 //
-//        if (currTile.posNum.rowIndex == playerTile.posNum.rowIndex ) {
+//        if (initialTile.posNum.rowIndex == playerTile.posNum.rowIndex ) {
 //            // In the same row
-//            dir = currTile.posNum.colIndex >= playerTile.posNum.colIndex ? -1 : 1;
+//            dir = initialTile.posNum.colIndex >= playerTile.posNum.colIndex ? -1 : 1;
 //            nextTile = map.tiles[nextTile.posNum.rowIndex][nextTile.posNum.colIndex + dir];
-//            isVisible = currCharacter.canSeeTargetInDir(player, PVector.sub(nextTile.posCord, currTile.posCord));
-//        } else if(currTile.posNum.colIndex == playerTile.posNum.colIndex) {
+//            isVisible = currCharacter.canSeeTargetInDir(player, PVector.sub(nextTile.posCord, initialTile.posCord));
+//        } else if(initialTile.posNum.colIndex == playerTile.posNum.colIndex) {
 //            // In the same column
-//            dir = currTile.posNum.rowIndex >= playerTile.posNum.rowIndex ? -1 : 1;
+//            dir = initialTile.posNum.rowIndex >= playerTile.posNum.rowIndex ? -1 : 1;
 //            nextTile = map.tiles[nextTile.posNum.rowIndex + dir][nextTile.posNum.colIndex];
-//            isVisible =  currCharacter.canSeeTargetInDir(player, PVector.sub(nextTile.posCord, currTile.posCord));
+//            isVisible =  currCharacter.canSeeTargetInDir(player, PVector.sub(nextTile.posCord, initialTile.posCord));
 //        }
 //
 //        if (isVisible) {

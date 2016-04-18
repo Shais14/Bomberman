@@ -65,6 +65,15 @@ public class ActPathFindAndFollow extends Action {
         return false;
     }
 
+    @Override
+    public String getNextTarget(HashMap<Integer, Object> paramMap) {
+        if (pathTiles == null || pathTiles.size() == 0) {
+            return "";
+        }
+
+        return map.Treasure + " [" + subAction.getNextTarget(paramMap) + "]";
+    }
+
     public String toString() {
         return "--- Finding path to target, and proceeding to follow it";
     }

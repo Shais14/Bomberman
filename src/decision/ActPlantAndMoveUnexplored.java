@@ -179,6 +179,19 @@ public class ActPlantAndMoveUnexplored extends Action {
         return false;
     }
 
+    @Override
+    public String getNextTarget(HashMap<Integer, Object> paramMap) {
+        if (pathTiles == null || pathTiles.size() == 0) {
+            return "";
+        }
+
+        if (subAction == null) {
+            return "";
+        }
+
+        return pathTiles.get(pathTiles.size() - 1).toString() + " [" + subAction.getNextTarget(paramMap) + "]";
+    }
+
     public String toString() {
         String actionInfo = "--- Planting bomb and moving to an unexplored tile";
 

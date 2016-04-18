@@ -5,7 +5,6 @@ import debug.DebugUtil;
 import decision.Action;
 import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
-import processing.core.PImage;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -36,10 +35,6 @@ public class Main extends PApplet {
     boolean useSavedMapConfig = false;
     boolean startNewIteration = false;
     int iterationCount = 0;
-
-    final int IGNORE = 0;
-    final int PRESENCE = 1;
-    final int AMPLITUDE = 2;
 
     public ArrayList<Tile> getEnemyTiles() {
         int currRow, currCol, playerRow, playerCol, enemyRow, enemyCol;
@@ -87,15 +82,15 @@ public class Main extends PApplet {
         player.initialize(startingPoint);
 //        if (newMapGenerated) {
             switch (iterationCount % 3) {
-                case IGNORE:
+                case Const.IGNORE:
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.NO_SIGNAL_DECISION_TREE_FILE_NAME);
                     DebugUtil.printDebugString("Iteration count: No signal");
                     break;
-                case PRESENCE:
+                case Const.PRESENCE:
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME);
                     DebugUtil.printDebugString("Iteration count: Presence");
                     break;
-                case AMPLITUDE:
+                case Const.AMPLITUDE:
                     player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
                     DebugUtil.printDebugString("Iteration count: Signal seek");
                     break;
@@ -168,7 +163,6 @@ public class Main extends PApplet {
         bombermanMap.draw();
         bombermanMap.drawSignal();
         player.draw();
-        text.draw(player);
         for (Enemy currEnemy : enemies) {
             currEnemy.draw();
         }
@@ -208,6 +202,8 @@ public class Main extends PApplet {
                 }
             }
         }
+
+        text.draw(paramMap, iterationCount, !useSavedMapConfig);
 
         for (int i = 0; i < enemies.size(); i++) {
             enemy = enemies.get(i);

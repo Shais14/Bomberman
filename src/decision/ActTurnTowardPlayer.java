@@ -24,6 +24,11 @@ public class ActTurnTowardPlayer extends Action {
         return character.sAlign.checkOrientationReached();
     }
 
+    @Override
+    public String getNextTarget(HashMap<Integer, Object> paramMap) {
+        return "";
+    }
+
     public String toString() {
         return "--- Character turning toward player";
     }

@@ -312,7 +312,7 @@ public class Main extends PApplet {
         }
     }
 
-    private void reset() {
+    public void reset() {
         try {
             if (iterationCount <= 2) {
                 startNewIteration = true;
@@ -330,6 +330,8 @@ public class Main extends PApplet {
             } else {
                 DebugUtil.printRecords(records.get((iterationCount) / 3 - 1));
                 DebugUtil.saveRecords(records);
+                Analysis anal = new Analysis();
+                anal.readFile(Const.RECORDS_FILE_PATH);
                 System.exit(0);
             }
 //        if(player.lives > 0) {

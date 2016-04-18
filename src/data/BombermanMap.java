@@ -463,10 +463,10 @@ public class BombermanMap {
         int cc = currTile.posNum.colIndex;
         String current = rc+ " " + cc;
         ArrayList<String> processedList1 = new ArrayList<String>();
-        ArrayList<String> processedList2 = new ArrayList<String>();
         ArrayList<Tile> Targets = new ArrayList<Tile>();
 
         while(processedList1.size() != 4 && Targets.size() != 2) {
+            ArrayList<String> processedList2 = new ArrayList<String>();
             int x = (int) parent.random(1, 5);
 
             int nextTile[] = findTile(x, rc, cc);
@@ -519,7 +519,7 @@ public class BombermanMap {
         }
 
         if(processedList1.size() == 4) {
-            System.out.println("die");
+            System.out.println("die " + processedList1.toString());
         }
         return null;
 //        System.out.println(" Target " +target);

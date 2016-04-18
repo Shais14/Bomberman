@@ -21,6 +21,8 @@ public class ActSeekCoverAndMove extends Action {
     ArrayList<Tile> pathTiles;
     data.Character currCharacter;
     BombermanMap map;
+    Action subAction = null;
+    HashMap<Integer, Object> newParamMap;
 
     int mode;
 
@@ -86,6 +88,14 @@ public class ActSeekCoverAndMove extends Action {
                 (Math.abs(currCharacter.kinematicInfo.getPosition().y - nextTile.posCord.y) <= Const.LINEAR_EPSILON);
     }
 
+    HashMap<Integer, Object> prepareParamMap(HashMap<Integer, Object> paramMap) {
+        HashMap<Integer, Object> newParamMap = new HashMap<>();
+        for (Integer currKey: paramMap.keySet()) {
+            newParamMap.put(currKey, paramMap.get(currKey));
+        }
+        return newParamMap;
+    }
+
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
         if (mode == SEEKING_COVER) {
@@ -101,7 +111,7 @@ public class ActSeekCoverAndMove extends Action {
             }
         } else if (mode == WAITING) {
             if (hasReachedTarget(currSeekTile)) {
-                currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
+//                currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
                 if (!PredictionHelper.isCollisionPredicted(paramMap)) {
                     // Do nothing till prediction is for no collision
                     mode = RETURNING;
@@ -109,15 +119,26 @@ public class ActSeekCoverAndMove extends Action {
                 }
             }
         } else {
-            if (hasReachedTarget(currSeekTile)) {
-                int currIndex = pathTiles.indexOf(currSeekTile);
-                if (pathTiles.size() > currIndex + 1) {
-                    // Some tiles are remaining
-                    currSeekTile = pathTiles.get(currIndex + 1);
-                    // Future scope : recursively call ActMoveToNextTile
-                    currCharacter.move(currSeekTile.posCord);
-                } else {
-                    // Cover sought, and returned to original tile
+            if (subAction == null) {
+                if (hasReachedTarget(currSeekTile)) {
+                    int currIndex = pathTiles.indexOf(currSeekTile);
+                    if (pathTiles.size() > currIndex + 1) {
+                        // Some tiles are remaining
+                        currSeekTile = pathTiles.get(currIndex + 1);
+                        // Future scope : recursively call ActMoveToNextTile
+                        newParamMap = prepareParamMap(paramMap);
+                        newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, currSeekTile);
+                        subAction = new ActMoveNextTile();
+                        subAction.performAction(newParamMap);
+//                    currCharacter.move(currSeekTile.posCord);
+                    } else {
+                        // Cover sought, and returned to original tile
+                        currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
+                        return true;
+                    }
+                }
+            } else {
+                if (subAction.hasCompleted(newParamMap)) {
                     currCharacter.sArrive.setTarget(currCharacter.kinematicInfo);
                     return true;
                 }
@@ -133,6 +154,10 @@ public class ActSeekCoverAndMove extends Action {
             return "";
         }
 
-        return currSeekTile.toString();
+        if (subAction == null) {
+            return currSeekTile.toString();
+        }
+
+        return currSeekTile.toString() + " [" + subAction.getNextTarget(paramMap) + "]";
     }
 }

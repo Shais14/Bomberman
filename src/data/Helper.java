@@ -30,7 +30,8 @@ public class Helper {
      * @return Whether or not the two given angles are equal
      */
     public static boolean checkAngleEquality(float angle1, float angle2) {
-        return (Math.abs(angle1 - angle2)) % (2 * PConstants.PI) < Const.ANGLE_EPSILON;
+        return ((Math.abs(mapToRange(angle1) - mapToRange(angle2))) % (2 * PConstants.PI) < Const.ANGLE_EPSILON) ||
+                ((Math.abs(mapToRange(angle1) - mapToRange(angle2))) % (2 * PConstants.PI) >= (2 * PConstants.PI) - Const.ANGLE_EPSILON);
     }
 
     public static float randomBinomial() {

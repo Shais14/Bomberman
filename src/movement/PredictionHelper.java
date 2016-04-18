@@ -19,23 +19,29 @@ public class PredictionHelper {
 
         ArrayList<String> adjList = map.edges.get(targetTile.toString());
         for (Enemy currEnemy: enemies) {
-            Tile enemyTile = map.getTileAt(currEnemy.kinematicInfo.getPosition());
-            if (enemyTile == targetTile) {
-                return true;
-            }
+            if (currEnemy != currCharacter) {
+                Tile enemyTile = map.getTileAt(currEnemy.kinematicInfo.getPosition());
+                if (enemyTile == targetTile) {
+                    return true;
+                }
 
-            for (int i = 0; i < adjList.size(); i += 2) {
-                String adjTile = adjList.get(i);
-                Tile currTile = map.toTile(adjTile);
-                if (enemyTile == currTile && currEnemy != currCharacter) {
-                    PVector nextTileCord = PVector.add(enemyTile.posCord, PVector.fromAngle(currEnemy.kinematicInfo.getOrientation()).mult(map.tileSize));
-                    Tile predictedTile = map.getTileAt(nextTileCord);
-                    if (predictedTile == targetTile) {
+                PVector nextTileCord = PVector.add(enemyTile.posCord, PVector.fromAngle(currEnemy.kinematicInfo.getOrientation()).mult(map.tileSize));
+                Tile predictedTile = map.getTileAt(nextTileCord);
+
+                if (predictedTile == targetTile) {
+                    return true;
+                }
+
+                for (int i = 0; i < adjList.size(); i += 2) {
+                    String adjTile = adjList.get(i);
+                    Tile currTile = map.toTile(adjTile);
+                    if (enemyTile == currTile || predictedTile == currTile) {
                         return true;
                     }
                 }
             }
         }
+
         return false;
     }
 }

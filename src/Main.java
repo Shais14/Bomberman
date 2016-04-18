@@ -314,6 +314,8 @@ public class Main extends PApplet {
     }
 
     public void reset() {
+        System.out.println("iteration count " + iterationCount);
+
         try {
             if (iterationCount <= 2) {
                 startNewIteration = true;

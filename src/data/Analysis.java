@@ -32,7 +32,9 @@ public class Analysis {
     int countP;
     int numSuccessNS = 0, numfailsNS = 0, bestTimeNS = Integer.MAX_VALUE, worstTimeNS = 0, avgTimeNS = 0, bestBombNS = Integer.MAX_VALUE, worstBombNS = 0, avgBombNS = 0;
     int countNS;
-
+    int bestTimeAbomb, worstTimeAbomb, bestBombAtime, worstBombAtime;
+    int bestTimePbomb, worstTimePbomb, bestBombPtime, worstBombPtime;
+    int bestTimeNSbomb, worstTimeNSbomb, bestBombNStime, worstBombNStime;
 
     public  String readNextLine() {
         lineNumber++;
@@ -59,6 +61,10 @@ public class Analysis {
         countA = amplitude.size();
         countP = precision.size();
         countNS = noSignal.size();
+
+
+
+        //TODO: record stats only for successful cases. (change the if else order in the process function of each.)
         processNoSignal();
         processPrecision();
         processAmplitude();
@@ -91,10 +97,14 @@ public class Analysis {
             writer.println("Number of successful runs:" + Integer.toString(numSuccessNS));
             writer.println("Number of failed runs:" + Integer.toString(numfailsNS));
             writer.println("Best case (success) time taken:" + Integer.toString(bestTimeNS) + " seconds");
+            writer.println("Bombs planted in this case:" + Integer.toString(bestTimeNSbomb));
             writer.println("Worst case (success) time taken:" + Integer.toString(worstTimeNS) + " seconds");
+            writer.println("Bombs planted in this case:" + Integer.toString(worstTimeNSbomb));
             writer.println("Average (success) time taken over all runs:" + Integer.toString(avgTimeNS) + " seconds");
             writer.println("Best case (success) number of bombs planted:" + Integer.toString(bestBombNS) + " seconds");
+            writer.println("Time taken in this case:" + Integer.toString(bestBombNStime) + " seconds");
             writer.println("Worst case (success) number of bombs planted:" + Integer.toString(worstBombNS) + " seconds");
+            writer.println("Time taken in this case:" + Integer.toString(worstBombNStime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombNS) + " seconds");
 
             writer.println();
@@ -102,10 +112,14 @@ public class Analysis {
             writer.println("Number of successful runs:" + Integer.toString(numSuccessP));
             writer.println("Number of failed runs:" + Integer.toString(numfailsP));
             writer.println("Best case (success) time taken:" + Integer.toString(bestTimeP) + " seconds");
+            writer.println("Bombs planted in this case:" + Integer.toString(bestTimePbomb));
             writer.println("Worst case (success) time taken:" + Integer.toString(worstTimeP) + " seconds");
+            writer.println("Bombs planted in this case:" + Integer.toString(worstTimePbomb));
             writer.println("Average (success) time taken over all runs:" + Integer.toString(avgTimeP) + " seconds");
             writer.println("Best case (success) number of bombs planted:" + Integer.toString(bestBombP) + " seconds");
+            writer.println("Time taken in this case:" + Integer.toString(bestBombPtime) + " seconds");
             writer.println("Worst case (success) number of bombs planted:" + Integer.toString(worstBombP) + " seconds");
+            writer.println("Time taken in this case:" + Integer.toString(worstBombPtime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombP) + " seconds");
 
             writer.println();
@@ -113,34 +127,38 @@ public class Analysis {
             writer.println("Number of successful runs:" + Integer.toString(numSuccessA));
             writer.println("Number of failed runs:" + Integer.toString(numfailsA));
             writer.println("Best case (success) time taken:" + Integer.toString(bestTimeA) + " seconds");
+            writer.println("Bombs planted in this case:" + Integer.toString(bestTimeAbomb));
             writer.println("Worst case (success) time taken:" + Integer.toString(worstTimeA) + " seconds");
+            writer.println("Bombs planted in this case:" + Integer.toString(worstTimeAbomb));
             writer.println("Average (success) time taken over all runs:" + Integer.toString(avgTimeA) + " seconds");
             writer.println("Best case (success) number of bombs planted:" + Integer.toString(bestBombA));
+            writer.println("Time taken in this case:" + Integer.toString(bestBombAtime) + " seconds");
             writer.println("Worst case (success) number of bombs planted:" + Integer.toString(worstBombA));
+            writer.println("Time taken in this case:" + Integer.toString(worstBombAtime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombA));
 
             writer.println();
-            if(bestTimeA > bestTimeNS && bestTimeA > bestTimeP){
+            if(bestTimeA < bestTimeNS && bestTimeA < bestTimeP){
                 writer.println("Best case (success) time taken :" + Integer.toString(bestTimeA) + " seconds for AMPLITUDE");
             }
-            else if(bestTimeP > bestTimeA && bestTimeP > bestTimeNS){
+            else if(bestTimeP < bestTimeA && bestTimeP < bestTimeNS){
                 writer.println("Best case (success) time taken :" + Integer.toString(bestTimeP) + " seconds for PRECISION");
             }
 
-            else if(bestTimeNS > bestTimeA && bestTimeNS > bestTimeP){
+            else if(bestTimeNS < bestTimeA && bestTimeNS < bestTimeP){
                 writer.println("Best case (success) time taken :" + Integer.toString(bestTimeNS) + " seconds for NO SIGNAL");
             }
 
             
             writer.println();
-            if(bestBombA > bestBombNS && bestBombA > bestBombP){
+            if(bestBombA < bestBombNS && bestBombA < bestBombP){
                 writer.println("Best case (success) number of bombs planted :" + Integer.toString(bestBombA) + " for AMPLITUDE");
             }
-            else if(bestBombP > bestBombA && bestBombP > bestBombNS){
+            else if(bestBombP < bestBombA && bestBombP < bestBombNS){
                 writer.println("Best case (success) number of bombs planted :" + Integer.toString(bestBombP) + " for PRECISION");
             }
 
-            else if(bestBombNS > bestBombA && bestBombNS > bestBombP){
+            else if(bestBombNS < bestBombA && bestBombNS < bestBombP){
                 writer.println("Best case (success) number of bombs planted :" + Integer.toString(bestBombNS) + " for NO SIGNAL");
             }
 
@@ -161,6 +179,9 @@ public class Analysis {
 //            to calculate success and failures
             if (tokens[6] == "true") {
                 numSuccessNS++;
+            } else {
+                numfailsNS++;
+            }
 
 //            to see best, worst, avg time;
 
@@ -168,8 +189,11 @@ public class Analysis {
 
                 if (Integer.parseInt(tokens[10]) <= bestTimeNS) {
                     bestTimeNS = Integer.parseInt(tokens[10]);
+                    bestTimeNSbomb = Integer.parseInt(tokens[8]);
+
                 } else if (Integer.parseInt(tokens[10]) >= worstTimeNS) {
                     worstTimeNS = Integer.parseInt(tokens[10]);
+                    worstTimeNSbomb = Integer.parseInt(tokens[8]);
                 }
 
 //            to see best, worst, avg number of bombs planted;
@@ -178,13 +202,13 @@ public class Analysis {
 
                 if (Integer.parseInt(tokens[8]) <= bestBombNS) {
                     bestBombNS = Integer.parseInt(tokens[8]);
+                    bestBombNStime = Integer.parseInt(tokens[10]);
                 } else if (Integer.parseInt(tokens[8]) >= worstBombNS) {
                     worstBombNS = Integer.parseInt(tokens[8]);
+                    worstBombNStime = Integer.parseInt(tokens[10]);
                 }
-            } else {
-                numfailsNS++;
             }
-        }
+
         avgTimeNS /= countNS;
         avgBombNS /= countNS;
     }
@@ -198,6 +222,11 @@ public class Analysis {
 //            to calculate success and failures
             if (tokens[6] == "true") {
                 numSuccessP++;
+            }
+            else {
+                numfailsP++;
+            }
+
 
 //            to see best, worst, avg time;
 
@@ -205,8 +234,10 @@ public class Analysis {
 
                 if (Integer.parseInt(tokens[10]) <= bestTimeP) {
                     bestTimeP = Integer.parseInt(tokens[10]);
+                    bestTimePbomb = Integer.parseInt(tokens[8]);
                 } else if (Integer.parseInt(tokens[10]) >= worstTimeP) {
                     worstTimeP = Integer.parseInt(tokens[10]);
+                    worstTimePbomb = Integer.parseInt(tokens[8]);
                 }
 
 //            to see best, worst, avg number of bombs planted;
@@ -215,15 +246,14 @@ public class Analysis {
 
                 if (Integer.parseInt(tokens[8]) <= bestBombP) {
                     bestBombP = Integer.parseInt(tokens[8]);
+                    bestBombPtime = Integer.parseInt(tokens[10]);
                 } else if (Integer.parseInt(tokens[8]) >= worstBombP) {
                     worstBombP = Integer.parseInt(tokens[8]);
+                    worstBombPtime = Integer.parseInt(tokens[10]);
                 }
 
-            } else {
-                numfailsP++;
             }
 
-        }
         avgTimeP /= countP;
         avgBombP /= countP;
 
@@ -237,6 +267,9 @@ public class Analysis {
 //            to calculate success and failures
             if (tokens[6] == "true") {
                 numSuccessA++;
+            }else {
+                numfailsA++;
+            }
 
 //            to see best, worst, avg time;
 
@@ -244,8 +277,10 @@ public class Analysis {
 
                 if (Integer.parseInt(tokens[10]) <= bestTimeA) {
                     bestTimeA = Integer.parseInt(tokens[10]);
+                    bestTimeAbomb = Integer.parseInt(tokens[8]);
                 } else if (Integer.parseInt(tokens[10]) >= worstTimeA) {
                     worstTimeA = Integer.parseInt(tokens[10]);
+                    worstTimeAbomb = Integer.parseInt(tokens[8]);
                 }
 
 //            to see best, worst, avg number of bombs planted;
@@ -254,14 +289,14 @@ public class Analysis {
 
                 if (Integer.parseInt(tokens[8]) <= bestBombA) {
                     bestBombA = Integer.parseInt(tokens[8]);
+                    bestBombAtime = Integer.parseInt(tokens[10]);
                 } else if (Integer.parseInt(tokens[8]) >= worstBombA) {
                     worstBombA = Integer.parseInt(tokens[8]);
+                    worstBombAtime = Integer.parseInt(tokens[10]);
                 }
 
-            } else {
-                numfailsA++;
             }
-        }
+
 
         avgTimeA /= countA;
         avgBombA /= countA;

@@ -72,7 +72,6 @@ public class ActSeekCoverAndMove extends Action {
         pathTiles.add(map.getTileAt(currCharacter.kinematicInfo.getPosition()));
         seekCover();
 //        for (String adjTile: adjList) {
-//            //TODO: Candidates should follow a specific priority (L/R then backward)
 //            Tile candidateTile = map.toTile(adjTile);
 //            if (candidateTile != initialTile) {
 //                if (candidateTile.ty == Tile.type.EMPTY) {

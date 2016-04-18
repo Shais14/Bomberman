@@ -17,7 +17,7 @@ public class KinematicInfo {
     float rotation;
 
     float maxSpeed = 1000000000;
-    long lastUpdateTime = 0;
+    public long lastUpdateTime = 0;
 
     public PVector getPosition() {
         return position;

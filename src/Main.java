@@ -17,8 +17,6 @@ public class Main extends PApplet {
     BombermanMap bombermanMap;
     PlayerInfo player;
     Text text;
-    //TODO: Convert this into an arraylist, to allow multiple enemies
-//    Enemy enemy;
     ArrayList<Enemy> enemies;
 
     int blastRadius = 1;
@@ -368,6 +366,7 @@ public class Main extends PApplet {
                     if (looping) {
                         noLoop();
                     } else {
+                        player.kinematicInfo.lastUpdateTime = System.currentTimeMillis();
                         loop();
                     }
                     break;

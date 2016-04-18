@@ -115,7 +115,7 @@ public interface Const extends PConstants {
         String ENEMY_DECISION_TREE_FILE_NAME = "enemyDTree.txt";
 
     }
-
+    String RECORDS_FILE_PATH = "debug/Records.txt";
     String GREAT_SUCCESS_IMAGE_FILE_PATH = "Great Success.jpg";
     int USE_LOGS = 1;
 }

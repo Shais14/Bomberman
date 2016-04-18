@@ -1,5 +1,6 @@
 package debug;
 
+import data.Analysis;
 import data.BombermanMap;
 import data.Const;
 import data.Record;

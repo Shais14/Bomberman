@@ -1,6 +1,7 @@
 package movement;
 
 import data.*;
+import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,14 +18,21 @@ public class PredictionHelper {
         BombermanMap map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
 
         ArrayList<String> adjList = map.edges.get(targetTile.toString());
-        for (int i = 0; i < adjList.size(); i += 2) {
-            String adjTile = adjList.get(i);
-            Tile currTile = map.toTile(adjTile);
-            for (Enemy currEnemy: enemies) {
-                Tile enemyTile = map.getTileAt(currEnemy.kinematicInfo.getPosition());
+        for (Enemy currEnemy: enemies) {
+            Tile enemyTile = map.getTileAt(currEnemy.kinematicInfo.getPosition());
+            if (enemyTile == targetTile) {
+                return true;
+            }
+
+            for (int i = 0; i < adjList.size(); i += 2) {
+                String adjTile = adjList.get(i);
+                Tile currTile = map.toTile(adjTile);
                 if (enemyTile == currTile && currEnemy != currCharacter) {
-                    //TODO: Use enemy's heading as well
-                    return true;
+                    PVector nextTileCord = PVector.add(enemyTile.posCord, PVector.fromAngle(currEnemy.kinematicInfo.getOrientation()).mult(map.tileSize));
+                    Tile predictedTile = map.getTileAt(nextTileCord);
+                    if (predictedTile == targetTile) {
+                        return true;
+                    }
                 }
             }
         }

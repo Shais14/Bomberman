@@ -88,14 +88,16 @@ public abstract class Character {
 
         PShape circleShape = parent.createShape(PApplet.ELLIPSE, 0, 0, 20, 20);
         circleShape.setFill(fill);
+        circleShape.setStroke(fill);
 
         PShape orientShape = parent.createShape(PApplet.TRIANGLE, 0, -10, 0, 10, 15, 0);
         orientShape.setFill(fill);
+        orientShape.setStroke(fill);
 
         mainShape = parent.createShape(PApplet.GROUP);
         mainShape.addChild(circleShape);
         mainShape.addChild(orientShape);
-        mainShape.setStroke(fill);
+//        mainShape.setStroke(fill);
 
         crumbShape = parent.createShape(PApplet.ELLIPSE, 0, 0, 2, 2);
         crumbShape.setFill(parent.color(64));

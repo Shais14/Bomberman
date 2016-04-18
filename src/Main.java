@@ -8,7 +8,6 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -38,6 +37,7 @@ public class Main extends PApplet {
     boolean useSavedMapConfig = false;
     boolean startNewIteration = false;
     int iterationCount = 0;
+    long iterationTimer = 0;
 
     public ArrayList<Tile> getEnemyTiles() {
         int currRow, currCol, playerRow, playerCol, enemyRow, enemyCol;
@@ -84,23 +84,23 @@ public class Main extends PApplet {
         player.setFill(color(200, 200, 100));
         player.initialize(startingPoint);
 //        if (newMapGenerated) {
-            switch (iterationCount % 3) {
-                case Const.IGNORE:
-                    startTime = System.nanoTime();
-                    player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.NO_SIGNAL_DECISION_TREE_FILE_NAME);
-                    DebugUtil.printDebugString("Iteration count: No signal");
-                    break;
-                case Const.PRESENCE:
-                    startTime = System.nanoTime();
-                    player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME);
-                    DebugUtil.printDebugString("Iteration count: Presence");
-                    break;
-                case Const.AMPLITUDE:
-                    startTime = System.nanoTime();
-                    player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
-                    DebugUtil.printDebugString("Iteration count: Signal seek");
-                    break;
-            }
+        switch (iterationCount % 3) {
+            case Const.IGNORE:
+                startTime = System.nanoTime();
+                player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.NO_SIGNAL_DECISION_TREE_FILE_NAME);
+                DebugUtil.printDebugString("Iteration count: No signal");
+                break;
+            case Const.PRESENCE:
+                startTime = System.nanoTime();
+                player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.SIGNAL_PRESENCE_DECISION_TREE_FILE_NAME);
+                DebugUtil.printDebugString("Iteration count: Presence");
+                break;
+            case Const.AMPLITUDE:
+                startTime = System.nanoTime();
+                player.decisionTreeHead = DecisionTreeGenerator.generateDecisionTree(Const.DecisionTreeParams.DECISION_TREE_FILE_NAME);
+                DebugUtil.printDebugString("Iteration count: Signal seek");
+                break;
+        }
 //        }
 
         enemyTiles = getEnemyTiles();
@@ -124,6 +124,7 @@ public class Main extends PApplet {
 //            iterationCount++;
 //        }
 
+        iterationTimer = System.currentTimeMillis();
         paramMap = new HashMap<Integer, Object>();
         enemiesParamMap = new ArrayList<HashMap<Integer, Object>>();
 
@@ -162,96 +163,107 @@ public class Main extends PApplet {
         Enemy enemy;
         HashMap<Integer, Object> enemyParamMap;
 
-        if (startNewIteration) {
-            initializeIteration(!useSavedMapConfig);
-            startNewIteration = false;
-        }
+        long currentTime = System.currentTimeMillis();
 
-        bombermanMap.draw();
-        bombermanMap.drawSignal();
-        player.draw();
-        for (Enemy currEnemy : enemies) {
-            currEnemy.draw();
-        }
-
-        if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) != null) {
-            if (activeBomb == null) {
-                activeBomb = (Bomb) paramMap.get(Const.DecisionTreeParams.BOMB_KEY);
-                bombPlantTime = System.currentTimeMillis();
+        try {
+            if (currentTime - iterationTimer > Const.ITERATION_TIME_LIMIT) {
+                reset();
             }
-        }
 
-        if (activeBomb != null) {
-            activeBomb.draw();
-
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - bombPlantTime > Const.BOMB_DETONATION_TIME) {
-                detonate();
-                activeBomb = null;
+            if (startNewIteration) {
+                initializeIteration(!useSavedMapConfig);
+                startNewIteration = false;
             }
-        }
 
-        Tile currTile = bombermanMap.getTileAt(player.kinematicInfo.getPosition());
-        if (currTile != null) {
-            paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currTile);
-            paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
+            bombermanMap.draw();
+            bombermanMap.drawSignal();
+            player.draw();
+            for (Enemy currEnemy : enemies) {
+                currEnemy.draw();
+            }
 
-            if (isNextDTreeEvalReqd(player, paramMap)) {
-                PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
-                paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
-                paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
-                Action nextAction = player.evaluateDTree(paramMap);
-                if (nextAction != null) {
-                    player.isPerformingAction = true;
-                    player.currAction = nextAction;
-                    DebugUtil.printDecisionTreeNode(nextAction);
-                    nextAction.performAction(paramMap);
+            if (paramMap.get(Const.DecisionTreeParams.BOMB_KEY) != null) {
+                if (activeBomb == null) {
+                    activeBomb = (Bomb) paramMap.get(Const.DecisionTreeParams.BOMB_KEY);
+                    bombPlantTime = System.currentTimeMillis();
                 }
             }
-        }
 
-        text.draw(paramMap, iterationCount, !useSavedMapConfig);
+            if (activeBomb != null) {
+                activeBomb.draw();
 
-        for (int i = 0; i < enemies.size(); i++) {
-            enemy = enemies.get(i);
-            enemyParamMap = enemiesParamMap.get(i);
-            Tile currEnemyTile = bombermanMap.getTileAt(enemy.kinematicInfo.getPosition());
-            if (currEnemyTile != null) {
-                enemyParamMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currEnemyTile);
+                if (currentTime - bombPlantTime > Const.BOMB_DETONATION_TIME) {
+                    detonate();
+                    activeBomb = null;
+                }
+            }
 
-                if (isNextDTreeEvalReqd(enemy, enemyParamMap)) {
-                    PVector predictedPosition = PVector.add(enemy.kinematicInfo.getPosition(), PVector.fromAngle(enemy.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
-                    enemyParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
-                    enemyParamMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, enemy);
-                    Action nextAction = enemy.evaluateDTree(enemyParamMap);
+            Tile currTile = bombermanMap.getTileAt(player.kinematicInfo.getPosition());
+            if (currTile != null) {
+                paramMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currTile);
+                paramMap.put(Const.DecisionTreeParams.BOMB_KEY, activeBomb);
+
+                if (isNextDTreeEvalReqd(player, paramMap)) {
+                    PVector predictedPosition = PVector.add(player.kinematicInfo.getPosition(), PVector.fromAngle(player.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+                    paramMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+                    paramMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, player);
+                    Action nextAction = player.evaluateDTree(paramMap);
                     if (nextAction != null) {
-                        enemy.isPerformingAction = true;
-                        enemy.currAction = nextAction;
-//                    DebugUtil.printDecisionTreeNode(nextAction);
-                        nextAction.performAction(enemyParamMap);
+                        player.isPerformingAction = true;
+                        player.currAction = nextAction;
+                        DebugUtil.printDecisionTreeNode(nextAction);
+                        nextAction.performAction(paramMap);
                     }
                 }
             }
-        }
+
+            text.draw(paramMap, iterationCount, !useSavedMapConfig);
+
+            for (int i = 0; i < enemies.size(); i++) {
+                enemy = enemies.get(i);
+                enemyParamMap = enemiesParamMap.get(i);
+                Tile currEnemyTile = bombermanMap.getTileAt(enemy.kinematicInfo.getPosition());
+                if (currEnemyTile != null) {
+                    enemyParamMap.put(Const.DecisionTreeParams.CURR_TILE_KEY, currEnemyTile);
+
+                    if (isNextDTreeEvalReqd(enemy, enemyParamMap)) {
+                        PVector predictedPosition = PVector.add(enemy.kinematicInfo.getPosition(), PVector.fromAngle(enemy.kinematicInfo.getOrientation()).mult(bombermanMap.tileSize));
+                        enemyParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, bombermanMap.getTileAt(predictedPosition));
+                        enemyParamMap.put(Const.DecisionTreeParams.CURR_CHAR_KEY, enemy);
+                        Action nextAction = enemy.evaluateDTree(enemyParamMap);
+                        if (nextAction != null) {
+                            enemy.isPerformingAction = true;
+                            enemy.currAction = nextAction;
+//                    DebugUtil.printDecisionTreeNode(nextAction);
+                            nextAction.performAction(enemyParamMap);
+                        }
+                    }
+                }
+            }
 
 
 //        Collision Detection
-        Tile currPlayerTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
+            Tile currPlayerTile = (Tile) paramMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
 
-        if (currPlayerTile == Tile.toTile(bombermanMap.Treasure, bombermanMap)) {
-            success();
-        }
-
-        for (int i = 0; i < enemies.size(); i++) {
-            enemyParamMap = enemiesParamMap.get(i);
-            Tile currEnemyTile = (Tile) enemyParamMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
-            if (currEnemyTile == currPlayerTile) {
-                player.die();
-                reset();
-                break;
+            if (currPlayerTile == Tile.toTile(bombermanMap.Treasure, bombermanMap)) {
+                success();
             }
-        }
 
+            for (int i = 0; i < enemies.size(); i++) {
+                enemyParamMap = enemiesParamMap.get(i);
+                Tile currEnemyTile = (Tile) enemyParamMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
+                if (currEnemyTile == currPlayerTile) {
+                    player.die();
+                    reset();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            DebugUtil.printDebugString(e.toString());
+            e.printStackTrace();
+            DebugUtil.printDebugString("**** About to reset now ****");
+            reset();
+        }
     }
 
     public void success() {
@@ -301,25 +313,25 @@ public class Main extends PApplet {
     }
 
     private void reset() {
-
-        if (iterationCount <=2) {
-            startNewIteration = true;
-            Record rc;
-            if(iterationCount % 3 == 0){
-                rc = new Record(iterationCount/3);
-                records.add(rc);
+        try {
+            if (iterationCount <= 2) {
+                startNewIteration = true;
+                iterationTimer = System.currentTimeMillis();
+                Record rc;
+                if (iterationCount % 3 == 0) {
+                    rc = new Record(iterationCount / 3);
+                    records.add(rc);
+                } else {
+                    rc = records.get(iterationCount / 3);
+                }
+                endTime = System.nanoTime();
+                updateRecords(rc);
+                iterationCount++;
             } else {
-                rc = records.get(iterationCount/3);
+                DebugUtil.printRecords(records.get((iterationCount) / 3 - 1));
+                DebugUtil.saveRecords(records);
+                System.exit(0);
             }
-            endTime =System.nanoTime();
-            updateRecords(rc);
-            iterationCount++;
-        } else {
-
-            DebugUtil.printRecords(records.get((iterationCount)/3-1));
-            DebugUtil.saveRecords(records);
-            System.exit(0);
-        }
 //        if(player.lives > 0) {
 //            PVector startingPoint;
 //            startingPoint = bombermanMap.tiles[1][1].posCord;
@@ -328,14 +340,19 @@ public class Main extends PApplet {
 //        else if(player.lives == 0){
 //            System.exit(0);
 //        }
+        } catch (Exception e) {
+            DebugUtil.printDebugString(e.toString());
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
     private void updateRecords(Record rc) {
-        rc.incrementScore(iterationCount%3, player.score );
-        rc.isSuccess(iterationCount%3, player.success);
-        rc.numOfBombsPlanted(iterationCount%3, Bomb.numBombs );
+        rc.incrementScore(iterationCount % 3, player.score);
+        rc.isSuccess(iterationCount % 3, player.success);
+        rc.numOfBombsPlanted(iterationCount % 3, Bomb.numBombs);
         long totalTime = (endTime - startTime) / 1000000000;
-        rc.timeTaken(iterationCount%3, totalTime);
+        rc.timeTaken(iterationCount % 3, totalTime);
         Bomb.numBombs = 0;
         startTime = 0;
         endTime = 0;

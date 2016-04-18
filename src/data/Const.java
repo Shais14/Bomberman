@@ -25,6 +25,8 @@ public interface Const extends PConstants {
     // Time after which the next bread crumb should be drawn (in milliseconds)
     int CRUMB_DRAW_TIME = 250;
 
+    int ITERATION_TIME_LIMIT = 90*1000;
+
 //  Number of enemies
     int numOfEnemies = 3;
 

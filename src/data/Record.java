@@ -7,6 +7,7 @@ public class Record {
     public int runCount;
     public int score[] = new int[3];
     public int bombs[] = new int[3];
+    public int death[] = new int[3];
     public int timeInSeconds[] = new int[3];
     public boolean success[] = new boolean[3];
     public Record(int a ){
@@ -63,6 +64,20 @@ public class Record {
                 break;
             case(2):
                 timeInSeconds[2] = (int) time;
+                break;
+        }
+    }
+
+    public void deathReason(int algo, int reason){
+        switch(algo){
+            case(0):
+                death[0] = reason;
+                break;
+            case(1):
+                death[1] = reason;
+                break;
+            case(2):
+                death[2] = reason;
                 break;
         }
     }

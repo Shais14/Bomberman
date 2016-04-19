@@ -513,7 +513,7 @@ public class BombermanMap {
                     }
                 }
                 if(processedList2.size() == 4)
-                    processedList1.add(current);
+                    processedList1.add(adjacent);
 
             }
         }

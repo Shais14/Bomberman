@@ -117,5 +117,14 @@ public interface Const extends PConstants {
     }
     String RECORDS_FILE_PATH = "debug/Records.txt";
     String GREAT_SUCCESS_IMAGE_FILE_PATH = "Great Success.jpg";
+
+    int DEATH_BY_BOMB = 1;
+    int DEATH_BY_ENEMY = 2;
+    int DEATH_BY_TIME = 3;
+    int DEATH_BY_EXCEPTION = 4;
+
+
+
+
     int USE_LOGS = 1;
 }

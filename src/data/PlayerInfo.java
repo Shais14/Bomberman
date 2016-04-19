@@ -22,6 +22,7 @@ public class PlayerInfo extends Character {
 //    public Tile parent;
     public ArrayList<Tile> moveList;
     public int numOfBombs;
+    public int reasonOfDeath;
 
     public PlayerInfo() {
         super();

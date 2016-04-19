@@ -35,6 +35,7 @@ public class Analysis {
     int bestTimeAbomb, worstTimeAbomb, bestBombAtime, worstBombAtime;
     int bestTimePbomb, worstTimePbomb, bestBombPtime, worstBombPtime;
     int bestTimeNSbomb, worstTimeNSbomb, bestBombNStime, worstBombNStime;
+    int reasonOfDeathNS, reasonOfDeathP, reasonOfDeathA;
 
     public  String readNextLine() {
         lineNumber++;

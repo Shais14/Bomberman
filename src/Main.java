@@ -168,6 +168,7 @@ public class Main extends PApplet {
 
         try {
             if (currentTime - iterationTimer > Const.ITERATION_TIME_LIMIT) {
+                player.reasonOfDeath = Const.DEATH_BY_TIME;
                 DebugUtil.printDebugString("Death by time");
                 reset();
             }
@@ -256,6 +257,7 @@ public class Main extends PApplet {
                 Tile currEnemyTile = (Tile) enemyParamMap.get(Const.DecisionTreeParams.CURR_TILE_KEY);
                 if (currEnemyTile == currPlayerTile) {
                     player.die();
+                    player.reasonOfDeath = Const.DEATH_BY_ENEMY;
                     DebugUtil.printDebugString("Death by enemy");
                     reset();
                     break;
@@ -264,6 +266,7 @@ public class Main extends PApplet {
         } catch (Exception e) {
             DebugUtil.printDebugString(e.toString());
             e.printStackTrace();
+            player.reasonOfDeath = Const.DEATH_BY_EXCEPTION;
             DebugUtil.printDebugString("**** About to reset now ****");
             DebugUtil.printDebugString("Death by exception");
             reset();
@@ -296,6 +299,7 @@ public class Main extends PApplet {
         int playerTileY = bombermanMap.quantizeY(player.kinematicInfo.getPosition());
         if (playerTileX == tile.posNum.colIndex && playerTileY == tile.posNum.rowIndex) {
             DebugUtil.printDebugString("***** Last action executed by PLAYER - " + player.currAction);
+            player.reasonOfDeath = Const.DEATH_BY_BOMB;
             DebugUtil.printDebugString("Death by bomb");
             player.die();
             reset();
@@ -365,6 +369,7 @@ public class Main extends PApplet {
         rc.incrementScore(iterationCount % 3, player.score);
         rc.isSuccess(iterationCount % 3, player.success);
         rc.numOfBombsPlanted(iterationCount % 3, Bomb.numBombs);
+        rc.deathReason(iterationCount % 3, player.reasonOfDeath);
         long totalTime = (endTime - startTime) / 1000000000;
         rc.timeTaken(iterationCount % 3, totalTime);
         Bomb.numBombs = 0;

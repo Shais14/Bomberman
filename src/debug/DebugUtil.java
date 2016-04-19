@@ -96,18 +96,21 @@ public class DebugUtil {
         System.out.println("Success = " + record.success[0]);
         System.out.println("Bombs Planted = " + record.bombs[0]);
         System.out.println("Time Taken = " + record.timeInSeconds[0]);
+        System.out.println("Reason of Death " + record.death[0]);
         System.out.println();
         System.out.println("Algorithm: Precision");
         System.out.println("Score = " + record.score[1]);
         System.out.println("Success = " + record.success[1]);
         System.out.println("Bombs Planted = " + record.bombs[1]);
         System.out.println("Time Taken = " + record.timeInSeconds[1]);
+        System.out.println("Reason of Death " + record.death[1]);
         System.out.println();
         System.out.println("Algorithm: Amplitude");
         System.out.println("Score = " + record.score[2]);
         System.out.println("Success = " + record.success[2]);
         System.out.println("Bombs Planted = " + record.bombs[2]);
         System.out.println("Time Taken = " + record.timeInSeconds[2]);
+        System.out.println("Reason of Death " + record.death[2]);
     }
 
     public static void saveRecords(ArrayList<Record> records){

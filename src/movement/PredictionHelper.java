@@ -11,12 +11,18 @@ import java.util.HashMap;
  */
 public class PredictionHelper {
     public static Enemy enemyToCollideWith = null;
+
     public static boolean isCollisionPredicted(HashMap<Integer, Object> paramMap) {
         // is enemy at a position 1 from the target tile?
         Tile targetTile = (Tile) paramMap.get(Const.DecisionTreeParams.NEXT_TILE_KEY);
         data.Character currCharacter = (data.Character) paramMap.get(Const.DecisionTreeParams.CURR_CHAR_KEY);
         ArrayList<Enemy> enemies = (ArrayList<Enemy>) paramMap.get(Const.DecisionTreeParams.ENEMY_KEY);
         BombermanMap map = (BombermanMap) paramMap.get(Const.DecisionTreeParams.GRAPH_KEY);
+
+
+        if (currCharacter instanceof Enemy) {
+            return false;
+        }
 
         ArrayList<String> adjList = map.edges.get(targetTile.toString());
         for (Enemy currEnemy: enemies) {

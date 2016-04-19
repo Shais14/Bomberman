@@ -179,12 +179,12 @@ public class Analysis {
             }
 
 
-            writer.println("Success Ratio for No Signal: " + Float.toString((numSuccessNS / countNS)*100)+"%");
-            writer.println("Success Ratio for Precision: " + Float.toString((numSuccessP / countP) * 100)+"%");
-            writer.println("Success Ratio for Amplitude: " + Float.toString((numSuccessA / countA) * 100)+"%");
+            writer.println("Success Ratio for No Signal: " + Float.toString((float)(numSuccessNS / countNS)*100)+"%");
+            writer.println("Success Ratio for Precision: " + Float.toString((float)(numSuccessP / countP) * 100)+"%");
+            writer.println("Success Ratio for Amplitude: " + Float.toString((float)(numSuccessA / countA) * 100)+"%");
 
 
-            writer.println("Success Ratio : " + Float.toString((numSuccessA + numSuccessP + numSuccessNS / countNS + countP +  countA) * 100) +"%" );
+            writer.println("Success Ratio : " + Float.toString((float)((numSuccessA + numSuccessP + numSuccessNS) / (countNS + countP +  countA)) * 100) +"%" );
 
 
 

@@ -167,9 +167,9 @@ public class Main extends PApplet {
         HashMap<Integer, Object> enemyParamMap;
 
         long currentTime = System.currentTimeMillis();
-
+        long gameTime = currentTime - iterationTimer;
         try {
-            if (currentTime - iterationTimer > Const.ITERATION_TIME_LIMIT) {
+            if ( gameTime > Const.ITERATION_TIME_LIMIT) {
                 player.reasonOfDeath = Const.DEATH_BY_TIME;
                 DebugUtil.printDebugString("Death by time");
                 reset();
@@ -222,7 +222,7 @@ public class Main extends PApplet {
                 }
             }
 
-            text.draw(paramMap, iterationCount, !useSavedMapConfig);
+            text.draw(paramMap, iterationCount, !useSavedMapConfig,  gameTime);
 
             for (int i = 0; i < enemies.size(); i++) {
                 enemy = enemies.get(i);
@@ -326,7 +326,7 @@ public class Main extends PApplet {
     public void reset() {
 
         try {
-            if (iterationCount <= 32) {
+            if (iterationCount <= 5) {
                 startNewIteration = true;
                 iterationTimer = System.currentTimeMillis();
                 Record rc;

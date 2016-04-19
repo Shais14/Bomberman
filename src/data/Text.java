@@ -14,8 +14,8 @@ public class Text {
         this.parent = parent;
     }
 
-    public void draw(HashMap<Integer, Object> paramMap, int iterationCount, boolean generateRandomMap) {
-        drawScore(paramMap);
+    public void draw(HashMap<Integer, Object> paramMap, int iterationCount, boolean generateRandomMap, long gameTime) {
+        drawTime(paramMap, gameTime);
         drawApproachUsed(paramMap, iterationCount);
         drawCurrAction(paramMap);
         drawNextTarget(paramMap);
@@ -31,12 +31,13 @@ public class Text {
 //
 //    }
 
-    public void drawScore(HashMap<Integer, Object> paramMap) {
+    public void drawTime(HashMap<Integer, Object> paramMap, long gameTime) {
         PlayerInfo player = (PlayerInfo) paramMap.get(Const.DecisionTreeParams.PLAYER_KEY);
 
+        gameTime = 180 - gameTime/1000;
         parent.textSize(14);
         parent.fill(255, 160);
-        parent.text("Score : " + player.score, 20, 38);
+        parent.text("Time : " + Long.toString(gameTime), 20, 38);
     }
 
     public void drawRandomized(boolean generateRandomMap) {

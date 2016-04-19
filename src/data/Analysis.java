@@ -35,6 +35,9 @@ public class Analysis {
     int bestTimeAbomb, worstTimeAbomb, bestBombAtime, worstBombAtime;
     int bestTimePbomb, worstTimePbomb, bestBombPtime, worstBombPtime;
     int bestTimeNSbomb, worstTimeNSbomb, bestBombNStime, worstBombNStime;
+    int reasonOfDeathNS[]= new int[4], reasonOfDeathP[]= new int[4], reasonOfDeathA[]= new int[4];
+
+
 
     public  String readNextLine() {
         lineNumber++;
@@ -107,6 +110,10 @@ public class Analysis {
             writer.println("Time taken in this case:" + Integer.toString(worstBombNStime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombNS) + " seconds");
 
+            for(int i = 0; i < 4; i++) {
+                writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathNS[i]));
+            }
+
             writer.println();
             writer.println("FOR PRECISION : ");
             writer.println("Number of successful runs:" + Integer.toString(numSuccessP));
@@ -122,6 +129,10 @@ public class Analysis {
             writer.println("Time taken in this case:" + Integer.toString(worstBombPtime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombP) + " seconds");
 
+            for(int i = 0; i < 4; i++) {
+                writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathP[i]));
+            }
+
             writer.println();
             writer.println("FOR AMPLITUDE : ");
             writer.println("Number of successful runs:" + Integer.toString(numSuccessA));
@@ -136,6 +147,11 @@ public class Analysis {
             writer.println("Worst case (success) number of bombs planted:" + Integer.toString(worstBombA));
             writer.println("Time taken in this case:" + Integer.toString(worstBombAtime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombA));
+
+            for(int i = 0; i < 4; i++) {
+                writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathA[i]));
+            }
+
 
             writer.println();
             if(bestTimeA < bestTimeNS && bestTimeA < bestTimeP){
@@ -162,6 +178,18 @@ public class Analysis {
                 writer.println("Best case (success) number of bombs planted :" + Integer.toString(bestBombNS) + " for NO SIGNAL");
             }
 
+
+            writer.println("Success Ratio for No Signal: " + Float.toString((float)(numSuccessNS / countNS)*100)+"%");
+            writer.println("Success Ratio for Precision: " + Float.toString((float)(numSuccessP / countP) * 100)+"%");
+            writer.println("Success Ratio for Amplitude: " + Float.toString((float)(numSuccessA / countA) * 100)+"%");
+
+
+            writer.println("Success Ratio : " + Float.toString((float)((numSuccessA + numSuccessP + numSuccessNS) / (countNS + countP +  countA)) * 100) +"%" );
+
+
+
+
+
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -169,6 +197,21 @@ public class Analysis {
 
 
 
+    }
+
+    private String causeOfDeath(int i) {
+        switch (i){
+            case(0):
+                return "BOMB";
+            case(1):
+                return "ENEMY";
+            case(2):
+                return "TIMEOUT";
+            case(3):
+                return "EXCEPTION";
+        }
+
+        return null;
     }
 
     private void processNoSignal() {
@@ -207,10 +250,17 @@ public class Analysis {
                     worstBombNS = Integer.parseInt(tokens[8]);
                     worstBombNStime = Integer.parseInt(tokens[10]);
                 }
-            }
+
+
+            reasonOfDeathNS[Integer.parseInt(tokens[12])]++;
+
+        }
 
         avgTimeNS /= countNS;
         avgBombNS /= countNS;
+
+
+
     }
 
 
@@ -251,6 +301,7 @@ public class Analysis {
                     worstBombP = Integer.parseInt(tokens[8]);
                     worstBombPtime = Integer.parseInt(tokens[10]);
                 }
+            reasonOfDeathP[Integer.parseInt(tokens[12])]++;
 
             }
 
@@ -294,7 +345,7 @@ public class Analysis {
                     worstBombA = Integer.parseInt(tokens[8]);
                     worstBombAtime = Integer.parseInt(tokens[10]);
                 }
-
+            reasonOfDeathA[Integer.parseInt(tokens[12])]++;
             }
 
 

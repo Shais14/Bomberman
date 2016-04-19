@@ -2,6 +2,7 @@
 import data.*;
 import data.Character;
 import debug.DebugUtil;
+import debug.GenerateCSV;
 import decision.Action;
 import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
@@ -326,7 +327,7 @@ public class Main extends PApplet {
     public void reset() {
 
         try {
-            if (iterationCount <= 5) {
+            if (iterationCount <= Const.NUMBER_OF_ITERATIONS) {
                 startNewIteration = true;
                 iterationTimer = System.currentTimeMillis();
                 Record rc;
@@ -348,6 +349,7 @@ public class Main extends PApplet {
             } else {
                 DebugUtil.printRecords(records.get((iterationCount) / 3 - 1));
                 DebugUtil.saveRecords(records);
+                GenerateCSV.generateCsvFile("records" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", records);
                 Analysis anal = new Analysis();
                 anal.readFile(Const.RECORDS_FILE_PATH);
                 System.exit(0);

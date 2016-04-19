@@ -35,7 +35,7 @@ public class Analysis {
     int bestTimeAbomb, worstTimeAbomb, bestBombAtime, worstBombAtime;
     int bestTimePbomb, worstTimePbomb, bestBombPtime, worstBombPtime;
     int bestTimeNSbomb, worstTimeNSbomb, bestBombNStime, worstBombNStime;
-    int reasonOfDeathNS[]= new int[4], reasonOfDeathP[]= new int[4], reasonOfDeathA[]= new int[4];
+    int reasonOfDeathNS[]= new int[5], reasonOfDeathP[]= new int[5], reasonOfDeathA[]= new int[5];
 
 
 
@@ -65,8 +65,6 @@ public class Analysis {
         countP = precision.size();
         countNS = noSignal.size();
 
-
-
         //TODO: record stats only for successful cases. (change the if else order in the process function of each.)
         processNoSignal();
         processPrecision();
@@ -76,7 +74,7 @@ public class Analysis {
 
     public void generateReport() {
 
-        String newFilePath = "debug" + File.separator + "Report.txt";
+        String newFilePath = "debug" + File.separator + "Report" + Const.NUMBER_OF_ITERATIONS +".txt";
         String Temp = null;
         File newFileDir = new File("debug");
         if (!newFileDir.exists()) {
@@ -110,8 +108,13 @@ public class Analysis {
             writer.println("Time taken in this case:" + Integer.toString(worstBombNStime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombNS) + " seconds");
 
-            for(int i = 0; i < 4; i++) {
-                writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathNS[i]));
+            for(int i = 0; i < 5; i++) {
+                if( i == 0) {
+                    writer.println(causeOfDeath(i) + " : " +  Integer.toString(reasonOfDeathNS[i]));
+                }
+                else {
+                    writer.println("Death by " + causeOfDeath(i) + " " + Integer.toString(reasonOfDeathNS[i]));
+                }
             }
 
             writer.println();
@@ -129,8 +132,13 @@ public class Analysis {
             writer.println("Time taken in this case:" + Integer.toString(worstBombPtime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombP) + " seconds");
 
-            for(int i = 0; i < 4; i++) {
+            for(int i = 0; i < 5; i++) {
+                if( i == 0) {
+                    writer.println(causeOfDeath(i) + " : " +  Integer.toString(reasonOfDeathNS[i]));
+                }
+                else {
                 writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathP[i]));
+                }
             }
 
             writer.println();
@@ -148,8 +156,14 @@ public class Analysis {
             writer.println("Time taken in this case:" + Integer.toString(worstBombAtime) + " seconds");
             writer.println("Average (success) number of bombs planted over all runs:" + Integer.toString(avgBombA));
 
-            for(int i = 0; i < 4; i++) {
-                writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathA[i]));
+            for(int i = 0; i < 5; i++) {
+
+                if( i == 0) {
+                    writer.println(causeOfDeath(i) + " : " +  Integer.toString(reasonOfDeathNS[i]));
+                }
+                else {
+                    writer.println("Death by " + causeOfDeath(i) + " " +  Integer.toString(reasonOfDeathA[i]));
+                }
             }
 
 
@@ -202,12 +216,14 @@ public class Analysis {
     private String causeOfDeath(int i) {
         switch (i){
             case(0):
-                return "BOMB";
+                return "NO DEATH";
             case(1):
-                return "ENEMY";
+                return "BOMB";
             case(2):
-                return "TIMEOUT";
+                return "ENEMY";
             case(3):
+                return "TIMEOUT";
+            case(4):
                 return "EXCEPTION";
         }
 
@@ -219,9 +235,11 @@ public class Analysis {
         for (String temp : noSignal) {
             String tokens[] = temp.split(" ");
 
+            countNS++;
 //            to calculate success and failures
             if (tokens[6] == "true") {
                 numSuccessNS++;
+                System.out.println("Success");
             } else {
                 numfailsNS++;
             }
@@ -259,7 +277,7 @@ public class Analysis {
         avgTimeNS /= countNS;
         avgBombNS /= countNS;
 
-
+        System.out.println(countNS);
 
     }
 
@@ -268,7 +286,7 @@ public class Analysis {
 
         for (String temp : precision) {
             String tokens[] = temp.split(" ");
-
+            countP++;
 //            to calculate success and failures
             if (tokens[6] == "true") {
                 numSuccessP++;
@@ -314,7 +332,7 @@ public class Analysis {
 
         for (String temp : amplitude) {
             String tokens[] = temp.split(" ");
-
+            countA++;
 //            to calculate success and failures
             if (tokens[6] == "true") {
                 numSuccessA++;

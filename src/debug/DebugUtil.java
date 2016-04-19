@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 /**
  * Created by Anand on 4/1/2016.
  */
@@ -114,7 +115,7 @@ public class DebugUtil {
     }
 
     public static void saveRecords(ArrayList<Record> records){
-        String newFilePath = "debug" + File.separator + "Records.txt";
+        String newFilePath = "debug" + File.separator + "Records" + Integer.toString(Const.NUMBER_OF_ITERATIONS) + ".txt" ;
 
         File newFileDir = new File("debug");
         if (!newFileDir.exists()) {

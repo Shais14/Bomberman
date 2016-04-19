@@ -7,11 +7,11 @@ import decision.DecisionTreeGenerator;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Random;
+
 
 public class Main extends PApplet {
     //Data Structures
@@ -22,6 +22,7 @@ public class Main extends PApplet {
     ArrayList<Record> records = new ArrayList<Record>();
     PImage img;
     int blastRadius = 1;
+
 
     Bomb activeBomb;
 
@@ -158,6 +159,7 @@ public class Main extends PApplet {
         background(155);
         initializeIteration(true);
         img = loadImage(Const.GREAT_SUCCESS_IMAGE_FILE_PATH);
+
     }
 
     public void draw() {
@@ -324,7 +326,7 @@ public class Main extends PApplet {
     public void reset() {
 
         try {
-            if (iterationCount <= 98) {
+            if (iterationCount <= 32) {
                 startNewIteration = true;
                 iterationTimer = System.currentTimeMillis();
                 Record rc;

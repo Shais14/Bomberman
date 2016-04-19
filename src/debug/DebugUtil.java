@@ -131,7 +131,7 @@ public class DebugUtil {
             }
 
             PrintWriter writer = new PrintWriter(newFile, "UTF-8");
-            writer.println("Algorithm - Score - Success - Bombs Planted - Time Taken(seconds)");
+            writer.println("Algorithm - Score - Success - Bombs Planted - Time Taken(seconds)- Deaths by");
             for (Record rec: records) {
                 writer.println(rec.toString(0));
                 writer.println(rec.toString(1));

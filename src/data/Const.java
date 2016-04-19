@@ -25,10 +25,10 @@ public interface Const extends PConstants {
     // Time after which the next bread crumb should be drawn (in milliseconds)
     int CRUMB_DRAW_TIME = 250;
 
-    int ITERATION_TIME_LIMIT = 90*1000;
+    int ITERATION_TIME_LIMIT = 180*1000;
 
 //  Number of enemies
-    int numOfEnemies = 3;
+    int numOfEnemies = 2;
 
 //    Minimum Character Distance
     int minCharacterDist = 8;
@@ -118,10 +118,10 @@ public interface Const extends PConstants {
     String RECORDS_FILE_PATH = "debug/Records.txt";
     String GREAT_SUCCESS_IMAGE_FILE_PATH = "Great Success.jpg";
 
-    int DEATH_BY_BOMB = 1;
-    int DEATH_BY_ENEMY = 2;
-    int DEATH_BY_TIME = 3;
-    int DEATH_BY_EXCEPTION = 4;
+    int DEATH_BY_BOMB = 0;
+    int DEATH_BY_ENEMY = 1;
+    int DEATH_BY_TIME = 2;
+    int DEATH_BY_EXCEPTION = 3;
 
 
 

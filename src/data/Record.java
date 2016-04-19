@@ -87,16 +87,15 @@ public class Record {
             String eachRecord = null;
             switch(i){
                 case(0):
-                    eachRecord = "1 - NOSIGNAL - " + String.valueOf(score[0]) + " - " + success[0]+ " - " + bombs[0]+ " - " +  timeInSeconds[0];
+                    eachRecord = "1 - NOSIGNAL - " + String.valueOf(score[0]) + " - " + success[0]+ " - " + bombs[0]+ " - " +  timeInSeconds[0] + " - " +  death[0];
                     break;
                 case(1):
-                    eachRecord = "2 - PRECISION - " + String.valueOf(score[1]) + " - "+ success[1] + " - "+ bombs[1] + " - "+  timeInSeconds[1];
+                    eachRecord = "2 - PRECISION - " + String.valueOf(score[1]) + " - "+ success[1] + " - "+ bombs[1] + " - "+  timeInSeconds[1]+ " - " +  death[1];
                     break;
                 case(2):
-                    eachRecord = "3 - AMPLITUDE - " + String.valueOf(score[2]) + " - "+ success[2] + " - "+ bombs[2]+ " - " +  timeInSeconds[2];
+                    eachRecord = "3 - AMPLITUDE - " + String.valueOf(score[2]) + " - "+ success[2] + " - "+ bombs[2]+ " - " +  timeInSeconds[2]+ " - " +  death[2];
                     break;
             }
-
 
             return eachRecord;
         }

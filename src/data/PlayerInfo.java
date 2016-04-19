@@ -31,6 +31,7 @@ public class PlayerInfo extends Character {
         numOfBombs = 0;
         moveList = new ArrayList<Tile>();
 
+
     }
 
     public PlayerInfo(PApplet parent, BombermanMap map) {

@@ -43,11 +43,12 @@ public class ActPlantAndMoveUnexplored extends Action {
         } else {
             //TODO: Still try to seek cover, maybe?
             DebugUtil.printDebugString("$$$ Going to die");
+            System.out.println(pathTiles.size());
             subAction = null;
         }
     }
 
-    public ArrayList<Tile> findUnexploredBrickPath(PosNum pos) {
+    public ArrayList<Tile>  findUnexploredBrickPath(PosNum pos) {
         int i, j, k, currRow, currCol,  level;
         String nextTileString, currTileString;
         ArrayList<Tile> emptyTiles;
@@ -62,18 +63,25 @@ public class ActPlantAndMoveUnexplored extends Action {
 
         do {
 
+//      checking one block away from the current position, selecting rows.
             for (i = currRow - level; flag && i <= currRow + level; i = i + 2*level)
             {
+
+//                corner cases
                 if (i <= 0 || i >= map.row-1)
                     continue;
+
+//      checking one block away from the current position, selecting columns.
                 for (j = currCol - level; flag && j <= currCol + level; j++)
                 {
-                    if (j <= 0 || i >= map.col-1)
+//                    corner cases
+                    if (j <= 0 || j >= map.col-1)
                         continue;
-
+//to avoid bricks and adjacent coloumns
                     if (map.tiles[i][j].ty != Tile.type.BRICK || Math.abs(i-currRow) + Math.abs(j - currCol)==1)
                         continue;
 
+//                  get current empty tiles in the current row and coloumn;
                     emptyTiles = getEmptyTiles(currRow, currCol, i, j);
 
                     for (k = 0; flag && k < emptyTiles.size(); k++)
@@ -100,13 +108,12 @@ public class ActPlantAndMoveUnexplored extends Action {
                         continue;
 
                     emptyTiles = getEmptyTiles(currRow, currCol, i, j);
-                    for (k = 0; k < emptyTiles.size(); k++)
+                    for (k = 0; flag  && k < emptyTiles.size(); k++)
                     {
                         nextTileString = emptyTiles.get(k).toString();
                         path = astar.pathAstar(currTileString, nextTileString, "E");
                         if (path.size() > 2)
                             flag = false;
-
                     }
                 }
             }
@@ -148,7 +155,6 @@ public class ActPlantAndMoveUnexplored extends Action {
 //                    brickRow = tile1.posNum.rowIndex;
 //                    brickCol = tile1.posNum.colIndex;
 //                }
-
             }
         }
 

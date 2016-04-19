@@ -333,6 +333,12 @@ public class Main extends PApplet {
                 endTime = System.nanoTime();
                 updateRecords(rc);
                 iterationCount++;
+                if (iterationCount % 3 != 0) {
+                    mapConfigFilePath = DebugUtil.saveMapConfig(bombermanMap);
+                    useSavedMapConfig = true;
+                } else {
+                    useSavedMapConfig = false;
+                }
             } else {
                 DebugUtil.printRecords(records.get((iterationCount) / 3 - 1));
                 DebugUtil.saveRecords(records);
@@ -444,12 +450,13 @@ public class Main extends PApplet {
                     useSavedMapConfig = false;
                     break;
                 case 'n':
-                    iterationCount++;
+//                    iterationCount++;
                     startNewIteration = true;
                     if (!useSavedMapConfig) {
                         mapConfigFilePath = DebugUtil.saveMapConfig(bombermanMap);
                         useSavedMapConfig = true;
                     }
+                    reset();
                     break;
                 default:
             }

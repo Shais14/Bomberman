@@ -21,6 +21,7 @@ public class ActSeekCoverAndMove extends Action {
     ArrayList<Tile> pathTiles;
     data.Character currCharacter;
     BombermanMap map;
+    Bomb activeBomb;
     Action subAction = null;
     HashMap<Integer, Object> newParamMap;
 
@@ -39,7 +40,7 @@ public class ActSeekCoverAndMove extends Action {
         float newHeading = currCharacter.kinematicInfo.getOrientation() + newDir * PConstants.PI / 2;
         PVector candidateTileCoords = PVector.add(currCharacter.kinematicInfo.getPosition(), PVector.fromAngle(newHeading).mult(map.tileSize));
         Tile candidateTile = map.getTileAt(candidateTileCoords);
-        if (candidateTile.ty == Tile.type.EMPTY) {
+        if (candidateTile.ty == Tile.type.EMPTY && (activeBomb == null || map.getTileAt(activeBomb.bombPos) != candidateTile)) {
             // If tile is free, move to it
             currSeekTile = candidateTile;
             mode = WAITING;
@@ -48,7 +49,7 @@ public class ActSeekCoverAndMove extends Action {
             newHeading = currCharacter.kinematicInfo.getOrientation() + ((-1) * newDir * PConstants.PI / 2);
             candidateTileCoords = PVector.add(currCharacter.kinematicInfo.getPosition(), PVector.fromAngle(newHeading).mult(map.tileSize));
             candidateTile = map.getTileAt(candidateTileCoords);
-            if (candidateTile.ty == Tile.type.EMPTY) {
+            if (candidateTile.ty == Tile.type.EMPTY && (activeBomb == null || map.getTileAt(activeBomb.bombPos) != candidateTile)) {
                 // If tile is free, move to it
                 currSeekTile = candidateTile;
                 mode = WAITING;
@@ -61,7 +62,11 @@ public class ActSeekCoverAndMove extends Action {
                 }
                 candidateTileCoords = PVector.add(currCharacter.kinematicInfo.getPosition(), PVector.fromAngle(newHeading).mult(map.tileSize));
                 candidateTile = map.getTileAt(candidateTileCoords);
-                currSeekTile = candidateTile;
+//                if (candidateTile.ty == Tile.type.EMPTY  && (activeBomb == null || map.getTileAt(activeBomb.bombPos) != candidateTile)) {
+                    currSeekTile = candidateTile;
+//                } else {
+                    //TODO : What to do here???
+//                }
             }
         }
 
@@ -77,6 +82,7 @@ public class ActSeekCoverAndMove extends Action {
 
         mode = SEEKING_COVER;
         pathTiles.add(map.getTileAt(currCharacter.kinematicInfo.getPosition()));
+        activeBomb = (Bomb) paramMap.get(Const.DecisionTreeParams.BOMB_KEY);
         seekCover();
 //        for (String adjTile: adjList) {
 //            Tile candidateTile = map.toTile(adjTile);
@@ -103,6 +109,7 @@ public class ActSeekCoverAndMove extends Action {
 
     @Override
     public boolean hasCompleted(HashMap<Integer, Object> paramMap) {
+        activeBomb = (Bomb) paramMap.get(Const.DecisionTreeParams.BOMB_KEY);
         if (mode == SEEKING_COVER) {
             if (hasReachedTarget(currSeekTile)) {
                 newParamMap = prepareParamMap(paramMap);
@@ -138,10 +145,11 @@ public class ActSeekCoverAndMove extends Action {
                     subAction = new ActMoveNextTile();
                     subAction.performAction(newParamMap);
                 } else if (subAction != null) {
-                    currSeekTile = pathTiles.get(currIndex + 1);
                     newParamMap = prepareParamMap(paramMap);
                     newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, currSeekTile);
                     if (subAction.hasCompleted(newParamMap)) {
+                        currSeekTile = pathTiles.get(currIndex + 1);
+                        newParamMap.put(Const.DecisionTreeParams.NEXT_TILE_KEY, currSeekTile);
                         subAction = new ActMoveNextTile();
                         subAction.performAction(newParamMap);
                     }

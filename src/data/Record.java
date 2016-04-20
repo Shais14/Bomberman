@@ -1,5 +1,7 @@
 package data;
 
+import java.util.ArrayList;
+
 /**
  * Created by Shais Shaikh on 4/17/2016.
  */
@@ -100,5 +102,9 @@ public class Record {
             return eachRecord;
         }
 
+    public void main(String args[]){
+        ArrayList<Record> records = new ArrayList<Record>();
+
+    }
 
 }

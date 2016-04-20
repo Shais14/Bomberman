@@ -1,5 +1,8 @@
 package data;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import debug.GenerateCSV;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -19,25 +23,25 @@ public class Analysis {
     public static ArrayList<String> noSignal = new ArrayList<String>();
     public static ArrayList<String> precision = new ArrayList<String>();
     public static ArrayList<String> amplitude = new ArrayList<String>();
-    int numSuccessA = 0, numfailsA = 0, bestTimeA = Integer.MAX_VALUE, worstTimeA = 0, avgTimeA = 0, bestBombA = Integer.MAX_VALUE, worstBombA = 0, avgBombA = 0;
-    int countA ;
-    int numSuccessP = 0;
-    int numfailsP = 0;
-    int bestTimeP = Integer.MAX_VALUE;
-    int worstTimeP = 0;
-    int avgTimeP = 0;
-    int bestBombP = Integer.MAX_VALUE;
-    int worstBombP = 0;
-    int avgBombP = 0;
-    int countP;
-    int numSuccessNS = 0, numfailsNS = 0, bestTimeNS = Integer.MAX_VALUE, worstTimeNS = 0, avgTimeNS = 0, bestBombNS = Integer.MAX_VALUE, worstBombNS = 0, avgBombNS = 0;
-    int countNS;
-    int bestTimeAbomb, worstTimeAbomb, bestBombAtime, worstBombAtime;
-    int bestTimePbomb, worstTimePbomb, bestBombPtime, worstBombPtime;
-    int bestTimeNSbomb, worstTimeNSbomb, bestBombNStime, worstBombNStime;
-    int reasonOfDeathNS[]= new int[5], reasonOfDeathP[]= new int[5], reasonOfDeathA[]= new int[5];
-
-
+    public int numSuccessA = 0, numfailsA = 0, bestTimeA = Integer.MAX_VALUE, worstTimeA = 0, avgTimeA = 0, bestBombA = Integer.MAX_VALUE, worstBombA = 0, avgBombA = 0;
+    public int countA ;
+    public int numSuccessP = 0;
+    public int numfailsP = 0;
+    public int bestTimeP = Integer.MAX_VALUE;
+    public int worstTimeP = 0;
+    public int avgTimeP = 0;
+    public int bestBombP = Integer.MAX_VALUE;
+    public int worstBombP = 0;
+    public int avgBombP = 0;
+    public int countP;
+    public int numSuccessNS = 0, numfailsNS = 0, bestTimeNS = Integer.MAX_VALUE, worstTimeNS = 0, avgTimeNS = 0, bestBombNS = Integer.MAX_VALUE, worstBombNS = 0, avgBombNS = 0;
+    public int countNS;
+    public int bestTimeAbomb, worstTimeAbomb, bestBombAtime, worstBombAtime;
+    public int bestTimePbomb, worstTimePbomb, bestBombPtime, worstBombPtime;
+    public int bestTimeNSbomb, worstTimeNSbomb, bestBombNStime, worstBombNStime;
+    public int reasonOfDeathNS[]= new int[5], reasonOfDeathP[]= new int[5], reasonOfDeathA[]= new int[5];
+    Record rc = null;
+    ArrayList<Record> rec = new ArrayList<Record>();
 
     public  String readNextLine() {
         lineNumber++;
@@ -52,11 +56,16 @@ public class Analysis {
                 String nextLine = readNextLine();
                 if (nextLine.charAt(0) == '1') {
                     noSignal.add(nextLine);
+//                    addToRecords(nextLine, lineNumber-2);
                 } else if (nextLine.charAt(0) == '2') {
                     precision.add(nextLine);
+//                    addToRecords(nextLine, lineNumber -2);
                 } else if (nextLine.charAt(0) == '3') {
                     amplitude.add(nextLine);
+//                    addToRecords(nextLine, lineNumber-2);
                 }
+                
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,11 +74,31 @@ public class Analysis {
         countP = precision.size();
         countNS = noSignal.size();
 
-        //TODO: record stats only for successful cases. (change the if else order in the process function of each.)
         processNoSignal();
         processPrecision();
         processAmplitude();
         generateReport();
+    }
+
+    private void addToRecords(String nextLine, int i) {
+
+
+            if (i % 3 == 0) {
+                rc = new Record(i / 3);
+            }
+            String tokens[] = nextLine.split(" ");
+
+            rc.score[i %3] = Integer.parseInt(tokens[4]);
+            rc.success[i %3] = Boolean.parseBoolean(tokens[6]);
+            rc.bombs[i %3] = Integer.parseInt(tokens[8]);
+            rc.timeInSeconds[i%3] = Integer.parseInt(tokens[10]);
+            rc.death[i%3] = Integer.parseInt(tokens[12]);
+
+
+            if (i % 3 == 2) {
+                rec.add(rc);
+            }
+
     }
 
     public void generateReport() {
@@ -193,23 +222,16 @@ public class Analysis {
             }
 
 
-            writer.println("Success Ratio for No Signal: " + Float.toString((float)(numSuccessNS / countNS)*100)+"%");
-            writer.println("Success Ratio for Precision: " + Float.toString((float)(numSuccessP / countP) * 100)+"%");
-            writer.println("Success Ratio for Amplitude: " + Float.toString((float)(numSuccessA / countA) * 100)+"%");
+            writer.println("Success Ratio for No Signal: " + Float.toString(((float)numSuccessNS /(float) countNS)*100) +"%");
+            writer.println("Success Ratio for Precision: " + Float.toString(((float)numSuccessP /(float) countP) * 100)+"%");
+            writer.println("Success Ratio for Amplitude: " + Float.toString(((float)numSuccessA /(float)countA) * 100)+"%");
 
-
-            writer.println("Success Ratio : " + Float.toString((float)((numSuccessA + numSuccessP + numSuccessNS) / (countNS + countP +  countA)) * 100) +"%" );
-
-
-
-
+            writer.println("Success Ratio : " + Float.toString(((float)(numSuccessA + numSuccessP + numSuccessNS) / (float)(countNS + countP +  countA)) * 100) +"%" );
 
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
     }
 
@@ -235,14 +257,12 @@ public class Analysis {
         for (String temp : noSignal) {
             String tokens[] = temp.split(" ");
 
-            countNS++;
+
 //            to calculate success and failures
-            if (tokens[6] == "true") {
+            if (Objects.equals(tokens[6], "true")) {
                 numSuccessNS++;
                 System.out.println("Success");
-            } else {
-                numfailsNS++;
-            }
+
 
 //            to see best, worst, avg time;
 
@@ -268,7 +288,9 @@ public class Analysis {
                     worstBombNS = Integer.parseInt(tokens[8]);
                     worstBombNStime = Integer.parseInt(tokens[10]);
                 }
-
+            } else {
+                numfailsNS++;
+            }
 
             reasonOfDeathNS[Integer.parseInt(tokens[12])]++;
 
@@ -286,15 +308,10 @@ public class Analysis {
 
         for (String temp : precision) {
             String tokens[] = temp.split(" ");
-            countP++;
-//            to calculate success and failures
-            if (tokens[6] == "true") {
-                numSuccessP++;
-            }
-            else {
-                numfailsP++;
-            }
 
+//            to calculate success and failures
+            if (Objects.equals(tokens[6], "true")) {
+                numSuccessP++;
 
 //            to see best, worst, avg time;
 
@@ -319,9 +336,14 @@ public class Analysis {
                     worstBombP = Integer.parseInt(tokens[8]);
                     worstBombPtime = Integer.parseInt(tokens[10]);
                 }
-            reasonOfDeathP[Integer.parseInt(tokens[12])]++;
-
             }
+         else {
+            numfailsP++;
+        }
+
+        reasonOfDeathP[Integer.parseInt(tokens[12])]++;
+
+        }
 
         avgTimeP /= countP;
         avgBombP /= countP;
@@ -332,13 +354,10 @@ public class Analysis {
 
         for (String temp : amplitude) {
             String tokens[] = temp.split(" ");
-            countA++;
+
 //            to calculate success and failures
-            if (tokens[6] == "true") {
+            if (Objects.equals(tokens[6], "true")) {
                 numSuccessA++;
-            }else {
-                numfailsA++;
-            }
 
 //            to see best, worst, avg time;
 
@@ -363,9 +382,13 @@ public class Analysis {
                     worstBombA = Integer.parseInt(tokens[8]);
                     worstBombAtime = Integer.parseInt(tokens[10]);
                 }
-            reasonOfDeathA[Integer.parseInt(tokens[12])]++;
             }
+            else {
+            numfailsA++;
+        }
 
+        reasonOfDeathA[Integer.parseInt(tokens[12])]++;
+        }
 
         avgTimeA /= countA;
         avgBombA /= countA;
@@ -375,6 +398,10 @@ public class Analysis {
 public static void main(String args[]){
     Analysis anal = new Analysis();
     anal.readFile(Const.RECORDS_FILE_PATH);
+    GenerateCSV.generateCsvFile("Records" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", anal.rec);
+    GenerateCSV.compareCsvFile("Comparison" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", anal.rec, anal);
+    GenerateCSV.successCsvFile("Success" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", anal.rec, anal);
+
 
 }
 }

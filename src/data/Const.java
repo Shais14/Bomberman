@@ -26,7 +26,7 @@ public interface Const extends PConstants {
     int CRUMB_DRAW_TIME = 250;
 
     int ITERATION_TIME_LIMIT = 180*1000;
-    int NUMBER_OF_ITERATIONS = 2;
+    int NUMBER_OF_ITERATIONS = 14;
 //  Number of enemies
     int numOfEnemies = 2;
 
@@ -115,16 +115,14 @@ public interface Const extends PConstants {
         String ENEMY_DECISION_TREE_FILE_NAME = "enemyDTree.txt";
 
     }
-    String RECORDS_FILE_PATH = "debug/Records"+ NUMBER_OF_ITERATIONS +".txt";
+    String RECORDS_FILE_PATH = "debug/Records" + NUMBER_OF_ITERATIONS+ ".txt";
+//    String RECORDS_FILE_PATH = "debug/Records98.txt";
     String GREAT_SUCCESS_IMAGE_FILE_PATH = "Great Success.jpg";
 
-    int DEATH_BY_BOMB = 0;
-    int DEATH_BY_ENEMY = 1;
-    int DEATH_BY_TIME = 2;
-    int DEATH_BY_EXCEPTION = 3;
-
-
-
+    int DEATH_BY_BOMB = 1;
+    int DEATH_BY_ENEMY = 2;
+    int DEATH_BY_TIME = 3;
+    int DEATH_BY_EXCEPTION = 4;
 
     int USE_LOGS = 1;
 }

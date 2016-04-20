@@ -349,9 +349,11 @@ public class Main extends PApplet {
             } else {
                 DebugUtil.printRecords(records.get((iterationCount) / 3 - 1));
                 DebugUtil.saveRecords(records);
-                GenerateCSV.generateCsvFile("records" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", records);
+                GenerateCSV.generateCsvFile("Records" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", records);
                 Analysis anal = new Analysis();
                 anal.readFile(Const.RECORDS_FILE_PATH);
+                GenerateCSV.compareCsvFile("Comparison" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", records, anal);
+                GenerateCSV.successCsvFile("Success" + Integer.toString(Const.NUMBER_OF_ITERATIONS)+".csv", records, anal);
                 System.exit(0);
             }
 //        if(player.lives > 0) {
